@@ -1,0 +1,2837 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC 600 Study Planner - Lộ trình 2 tháng</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080c14;
+            --card-bg: rgba(13, 20, 35, 0.65);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --primary: #10b981;
+            --primary-glow: rgba(16, 185, 129, 0.15);
+            --secondary: #3b82f6;
+            --secondary-glow: rgba(59, 130, 246, 0.15);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --accent: #8b5cf6;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* Sidebar Style */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(10, 16, 30, 0.95);
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.75rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 2.25rem;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
+        }
+
+        .logo-text h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        .week-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .week-item {
+            padding: 0.85rem 1.1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+        }
+
+        .week-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: white;
+            transform: translateX(3px);
+        }
+
+        .week-item.active {
+            background: var(--primary-glow);
+            color: var(--primary);
+            border-color: rgba(16, 185, 129, 0.2);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.05);
+        }
+
+        .week-progress-circle {
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+
+        .week-item.active .week-progress-circle {
+            background: var(--primary);
+            color: #080c14;
+        }
+
+        .user-status {
+            margin-top: auto;
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .status-header {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Main Content Style */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 2.25rem 3.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.25rem;
+            max-width: 1400px;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        /* Top Header Panel */
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 1.75rem 2.25rem;
+            border-radius: 20px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        .welcome-text h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.35rem;
+            background: linear-gradient(to right, #ffffff, #d1d5db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-text p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .stats-group {
+            display: flex;
+            gap: 1.25rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            padding: 0.85rem 1.35rem;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        .stat-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .stat-lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+
+        /* Day Selection Tabs */
+        .day-tabs {
+            display: flex;
+            gap: 0.6rem;
+            background: rgba(10, 16, 30, 0.5);
+            padding: 0.45rem;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            width: fit-content;
+        }
+
+        .day-tab {
+            padding: 0.65rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            color: var(--text-muted);
+            border: none;
+            background: transparent;
+            font-size: 0.9rem;
+        }
+
+        .day-tab:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .day-tab.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Study Dashboard Layout */
+        .study-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 2.25rem;
+        }
+
+        @media (max-width: 1100px) {
+            .study-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .study-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .box-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1rem;
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        /* Task Checklist Style */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.1rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 1.2rem;
+            border-radius: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .task-item:hover {
+            background: rgba(255, 255, 255, 0.025);
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .task-item.completed {
+            border-color: rgba(16, 185, 129, 0.15);
+            background: rgba(16, 185, 129, 0.015);
+            opacity: 0.8;
+        }
+
+        .task-checkbox {
+            width: 22px;
+            height: 22px;
+            border-radius: 7px;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .task-item.completed .task-checkbox {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #080c14;
+        }
+
+        .task-checkbox svg {
+            width: 14px;
+            height: 14px;
+            display: none;
+            stroke: currentColor;
+            stroke-width: 3px;
+        }
+
+        .task-item.completed .task-checkbox svg {
+            display: block;
+        }
+
+        .task-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .task-name {
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .task-item.completed .task-name {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .task-badge {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.03em;
+            width: fit-content;
+        }
+
+        .badge-grammar { background: rgba(59, 130, 246, 0.1); color: #60a5fa; }
+        .badge-vocab { background: rgba(16, 185, 129, 0.1); color: #34d399; }
+        .badge-listen { background: rgba(139, 92, 246, 0.1); color: #a78bfa; }
+
+        /* Segment Tabs inside panels */
+        .panel-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(0,0,0,0.25);
+            padding: 0.3rem;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+        }
+
+        .panel-tab {
+            padding: 0.4rem 0.85rem;
+            border-radius: 7px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .panel-tab.active {
+            background: rgba(255,255,255,0.06);
+            color: white;
+        }
+
+        /* Vocabulary Flashcard Style */
+        .vocab-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .flashcard-wrapper {
+            perspective: 1000px;
+            width: 100%;
+            height: 250px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, rgba(20, 30, 55, 0.9), rgba(12, 18, 32, 0.95));
+            color: white;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(10, 16, 30, 0.98));
+            transform: rotateY(180deg);
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        .word-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .word-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.3rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            background: linear-gradient(to right, #ffffff, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .speaker-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .speaker-btn:hover {
+            transform: scale(1.1);
+            background: rgba(59, 130, 246, 0.15);
+            color: white;
+        }
+
+        .word-pron {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 1.25rem;
+        }
+
+        .word-pos {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.2rem 0.7rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .word-mean {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.85rem;
+            text-align: center;
+        }
+
+        .word-example {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            text-align: center;
+            font-style: italic;
+            line-height: 1.5;
+            max-width: 90%;
+            border-top: 1px dashed rgba(255,255,255,0.05);
+            padding-top: 0.85rem;
+        }
+
+        .card-tip {
+            position: absolute;
+            bottom: 1.25rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .vocab-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.35rem;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            user-select: none;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #080c14;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #059669;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+        }
+
+        /* Word Quick Grid */
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.45rem;
+            background: rgba(0,0,0,0.15);
+            padding: 0.75rem;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+        }
+
+        .word-chip {
+            padding: 0.45rem 0.25rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.03);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.15rem;
+        }
+
+        .word-chip:hover {
+            background: rgba(255,255,255,0.06);
+            color: white;
+        }
+
+        .word-chip.active {
+            border-color: var(--secondary);
+            background: var(--secondary-glow);
+            color: var(--secondary);
+        }
+
+        .word-chip.mastered {
+            border-color: rgba(16, 185, 129, 0.2);
+            background: rgba(16, 185, 129, 0.05);
+            color: var(--primary);
+        }
+
+        .word-chip.mastered::after {
+            content: "✔";
+            font-size: 0.65rem;
+        }
+
+        /* Vocabulary Quiz Layout */
+        .quiz-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            min-height: 250px;
+            justify-content: center;
+        }
+
+        .quiz-header {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .quiz-question {
+            font-size: 1.15rem;
+            font-weight: 700;
+            text-align: center;
+            color: white;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-choices {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .quiz-choice {
+            padding: 0.85rem 1.1rem;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            text-align: left;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .quiz-choice:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .quiz-choice.correct {
+            background: rgba(16, 185, 129, 0.15) !important;
+            border-color: var(--primary) !important;
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .quiz-choice.incorrect {
+            background: rgba(239, 68, 68, 0.15) !important;
+            border-color: #ef4444 !important;
+            color: white !important;
+        }
+
+        /* Grammar panel detailed contents */
+        .grammar-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .grammar-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1.35rem;
+        }
+
+        .grammar-formula {
+            background: rgba(59, 130, 246, 0.05);
+            border-left: 3px solid #3b82f6;
+            padding: 0.65rem 0.85rem;
+            font-family: monospace;
+            font-size: 0.95rem;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 0.5rem;
+            color: #93c5fd;
+            word-break: break-word;
+        }
+
+        .grammar-item-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        .grammar-example-item {
+            margin-top: 0.6rem;
+            padding: 0.65rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.015);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* Shadowing Script Highlight Styles */
+        .shadow-word {
+            transition: background-color 0.15s ease, color 0.15s ease;
+            border-radius: 4px;
+            padding: 0 2px;
+            display: inline-block;
+        }
+
+        .shadow-word.highlighted {
+            background-color: var(--secondary-glow);
+            color: var(--secondary);
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Shadowing Player Mock */
+        .shadowing-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .audio-player {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        .player-progress-container {
+            flex-grow: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .player-progress-bar {
+            height: 100%;
+            background: var(--secondary);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .audio-waves {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            height: 24px;
+        }
+
+        .audio-waves span {
+            width: 3px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+            transition: height 0.1s ease;
+        }
+
+        .audio-waves.playing span {
+            animation: bounceWave 0.6s infinite alternate;
+        }
+
+        .audio-waves.playing span:nth-child(2n) { animation-delay: 0.1s; }
+        .audio-waves.playing span:nth-child(3n) { animation-delay: 0.25s; }
+        .audio-waves.playing span:nth-child(4n) { animation-delay: 0.15s; }
+        .audio-waves.playing span:nth-child(5n) { animation-delay: 0.3s; }
+        .audio-waves.playing span:nth-child(6n) { animation-delay: 0.2s; }
+        .audio-waves.playing span:nth-child(7n) { animation-delay: 0.05s; }
+
+        @keyframes bounceWave {
+            0% { height: 4px; }
+            100% { height: 24px; }
+        }
+
+        /* Mock Test Tracker */
+        .score-tracker-box {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 1100px) {
+            .score-tracker-box {
+                grid-column: span 1;
+            }
+        }
+
+        .chart-container {
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-placeholder {
+            position: absolute;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            margin-top: 0.5rem;
+        }
+
+        .score-table th, .score-table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .score-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .score-table td {
+            font-size: 0.95rem;
+        }
+
+        .score-input {
+            width: 90px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 0.45rem 0.75rem;
+            color: white;
+            font-weight: bold;
+            font-family: monospace;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .score-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.05);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
+        }
+
+        .score-total {
+            font-family: 'Outfit', sans-serif;
+            font-weight: bold;
+            font-size: 1.15rem;
+            color: var(--primary);
+        }
+
+        /* Study Tips section */
+        .tips-panel {
+            background: rgba(139, 92, 246, 0.03);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            border-radius: 14px;
+            padding: 1.2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .tips-icon {
+            font-size: 1.5rem;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .tips-body h5 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: #c084fc;
+        }
+
+        .tips-body p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        /* Resources links cards */
+        .resource-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .resource-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 0.85rem 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .resource-card:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: var(--secondary);
+            transform: translateX(4px);
+        }
+
+        .resource-info {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        .resource-icon-box {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .resource-text h6 {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .resource-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .resource-card svg {
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            transition: transform 0.2s ease;
+        }
+
+        .resource-card:hover svg {
+            transform: translateX(2px);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CONFETTI CANVAS -->
+    <canvas id="confettiCanvas" style="position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:9999;"></canvas>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+        <div class="logo-area">
+            <div class="logo-icon">T6</div>
+            <div class="logo-text">
+                <h1>TOEIC 600</h1>
+                <p>Roadmap 2 Tháng</p>
+            </div>
+        </div>
+
+        <ul class="week-list" id="weekList">
+            <!-- Dynamic Weeks loaded here -->
+        </ul>
+
+        <div class="user-status">
+            <div class="progress-text">
+                <span class="status-header">Tiến trình lộ trình</span>
+                <span id="overallPercent">0%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="overallProgressBar"></div>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 0.25rem;">
+                Hoàn thành <span id="completedTasksCount">0</span>/<span id="totalTasksCount">0</span> nhiệm vụ
+            </p>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <header class="header-panel">
+            <div class="welcome-text">
+                <h2 id="currentWeekTitle">Tuần 1: Nền tảng học tập</h2>
+                <p id="currentWeekDesc">Tập trung rèn luyện các ngữ pháp cơ bản và làm quen với từ vựng cốt lõi</p>
+            </div>
+            <div class="stats-group">
+                <div class="stat-card">
+                    <span class="stat-val" style="color: var(--warning);">🔥 <span id="streakDays" style="color: var(--warning);">0</span></span>
+                    <span class="stat-lbl">Streak liên tục</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-val" style="color: var(--primary);">📖 <span id="vocabMasteredCount" style="color: var(--primary);">0</span></span>
+                    <span class="stat-lbl">Từ đã thuộc</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- DAY TABS -->
+        <div class="day-tabs" id="dayTabs">
+            <!-- Dynamic days loaded here -->
+        </div>
+
+        <!-- STUDY DASHBOARD GRID -->
+        <div class="study-grid">
+            
+            <!-- LEFT COLUMN: Checklist & Tasks -->
+            <div class="study-box">
+                <h3 class="box-title">
+                    <div class="title-left">
+                        <svg style="width: 22px; height: 22px; stroke: var(--primary); fill: none; stroke-width: 2px" viewBox="0 0 24 24">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        Nhiệm vụ của ngày
+                    </div>
+                </h3>
+                <div class="task-list" id="dailyTaskList">
+                    <!-- Dynamic tasks loaded here -->
+                </div>
+
+                <div class="tips-panel" id="dailyTips">
+                    <div class="tips-icon">💡</div>
+                    <div class="tips-body">
+                        <h5>Mẹo học hôm nay</h5>
+                        <p id="tipsText">Hãy bắt đầu bằng việc đọc lướt nhanh ngữ pháp buổi sáng, ghi lại công thức cốt lõi. Buổi tối dành ra 15 phút nghe Shadowing để tăng cường phản xạ nhé!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Interactive Study Tools -->
+            <div class="study-box">
+                
+                <!-- Word Study Panel (Flashcard & Quiz) -->
+                <div class="vocab-panel" id="vocabPanel">
+                    <h3 class="box-title" style="border-bottom: none; padding-bottom: 0;">
+                        <div class="title-left">
+                            <svg style="width: 22px; height: 22px; stroke: var(--secondary); fill: none; stroke-width: 2px" viewBox="0 0 24 24">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            Từ vựng thông minh
+                        </div>
+                        <div class="panel-tabs">
+                            <button id="tabFlashcard" class="panel-tab active" onclick="switchVocabMode('flashcard')">Flashcard</button>
+                            <button id="tabQuiz" class="panel-tab" onclick="switchVocabMode('quiz')">Luyện tập</button>
+                        </div>
+                    </h3>
+                    
+                    <!-- Flashcard Mode View -->
+                    <div id="vocabFlashcardView">
+                        <div class="flashcard-wrapper">
+                            <div class="flashcard" id="vocabCard" onclick="handleCardClick(event, this)">
+                                <div class="card-face card-front">
+                                    <div class="word-header">
+                                        <div class="word-title" id="wordName">colleague</div>
+                                        <div class="speaker-btn" title="Phát âm" onclick="handleSpeakClick(event)">
+                                            🔊
+                                        </div>
+                                    </div>
+                                    <div class="word-pron" id="wordPron">/ˈkɒliːɡ/</div>
+                                    <span class="word-pos" id="wordPos">Noun</span>
+                                    <div class="card-tip">👆 Click để lật thẻ xem nghĩa</div>
+                                </div>
+                                <div class="card-face card-back">
+                                    <div class="word-mean" id="wordMean">đồng nghiệp</div>
+                                    <div class="word-example" id="wordExample">"My colleague helped me with the report."</div>
+                                    <div class="card-tip" style="color: var(--primary);">✨ Hãy lặp lại phát âm to lên!</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="vocab-actions" style="margin-top: 1.25rem;">
+                            <button class="btn" onclick="prevVocabWord()">◀ Trước</button>
+                            <button class="btn btn-primary" style="flex-grow: 1;" onclick="markWordMastered()">Đã thuộc ✔</button>
+                            <button class="btn" onclick="nextVocabWord()">Sau ▶</button>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin: 0.85rem 0;">
+                            Từ <span id="currentWordIndex">1</span>/20 của ngày (Chủ đề: <span id="vocabThemeName">Office</span>)
+                        </p>
+
+                        <!-- Dynamic Word Grid Selectors -->
+                        <div class="word-grid" id="wordGrid">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Quiz Mode View (Hidden by default) -->
+                    <div id="vocabQuizView" style="display: none;">
+                        <div class="quiz-panel" id="quizPanel">
+                            <!-- Populated dynamically by startQuiz() -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grammar Card Panel -->
+                <div class="grammar-panel" id="grammarPanel">
+                    <h3 class="box-title" style="border-bottom: none; padding-bottom: 0;">
+                        <div class="title-left">
+                            <svg style="width: 22px; height: 22px; stroke: var(--accent); fill: none; stroke-width: 2px" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                            </svg>
+                            Tóm tắt ngữ pháp nhanh
+                        </div>
+                        <div class="panel-tabs">
+                            <button id="gramTabFormula" class="panel-tab active" onclick="switchGrammarTab('formula')">Cấu trúc</button>
+                            <button id="gramTabUsage" class="panel-tab" onclick="switchGrammarTab('usage')">Cách dùng</button>
+                            <button id="gramTabExamples" class="panel-tab" onclick="switchGrammarTab('examples')">Ví dụ</button>
+                        </div>
+                    </h3>
+                    <div class="grammar-card">
+                        <h4 id="grammarTitle" style="color: #60a5fa; font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem;">Thì Hiện Tại Đơn</h4>
+                        
+                        <div id="grammarTabContent">
+                            <!-- Changes dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shadowing Player Card -->
+                <div class="shadowing-card" id="shadowingCard">
+                    <h3 class="box-title" style="border-bottom: none; padding-bottom: 0;">
+                        <div class="title-left">
+                            <svg style="width: 22px; height: 22px; stroke: var(--accent); fill: none; stroke-width: 2px" viewBox="0 0 24 24">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                            </svg>
+                            Luyện nghe Shadowing (Nói đuổi)
+                        </div>
+                    </h3>
+                    <div class="audio-player">
+                        <div id="shadowingScriptTitle" style="font-size: 0.85rem; font-weight: bold; color: var(--accent); margin-bottom: 0.35rem;"></div>
+                        <div id="shadowingScriptBox" style="background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); padding: 0.85rem 1rem; border-radius: 10px; font-size: 0.92rem; line-height: 1.6; margin-bottom: 0.75rem; color: #e5e7eb; user-select: none; max-height: 110px; overflow-y: auto;">
+                            <!-- Filled dynamically with span words -->
+                        </div>
+                        
+                        <div class="player-controls">
+                            <button id="playBtn" class="btn btn-primary" onclick="toggleShadowingPlayer()">
+                                <span id="playIcon">▶ Play Audio</span>
+                            </button>
+                            <div class="player-progress-container" onclick="handleProgressClick(event)">
+                                <div id="playerProgressBar" class="player-progress-bar"></div>
+                            </div>
+                            <span id="playerTimer">0:00</span>
+                        </div>
+                        <div id="audioWaves" class="audio-waves" style="margin-top: 0.5rem;">
+                            <span></span><span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resource Links Panel -->
+                <div class="resource-links" id="resourcePanel">
+                    <h3 class="box-title">
+                        <div class="title-left">
+                            <svg style="width: 22px; height: 22px; stroke: var(--success); fill: none; stroke-width: 2px" viewBox="0 0 24 24">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                            Tài liệu tự học bổ sung
+                        </div>
+                    </h3>
+                    <a href="https://youtube.com/@AnhLeTOEIC" target="_blank" class="resource-card">
+                        <div class="resource-info">
+                            <div class="resource-icon-box">▶</div>
+                            <div class="resource-text">
+                                <h6>Kênh Youtube Anh Lê TOEIC</h6>
+                                <p>Bài giảng giải đề ETS và chiến thuật thực tế</p>
+                            </div>
+                        </div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                    <a href="https://study4.com" target="_blank" class="resource-card">
+                        <div class="resource-info">
+                            <div class="resource-icon-box">✍</div>
+                            <div class="resource-text">
+                                <h6>STUDY4 - Nghe chép chính tả</h6>
+                                <p>Trực quan luyện shadowing và mock test online</p>
+                            </div>
+                        </div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SCORE TRACKER PANEL -->
+            <div class="study-box score-tracker-box">
+                <h3 class="box-title">
+                    <div class="title-left">
+                        <svg style="width: 22px; height: 22px; stroke: var(--warning); fill: none; stroke-width: 2px" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        Bảng theo dõi điểm thi thử Mock Test (Mục tiêu 600+)
+                    </div>
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+                    Nhập điểm số các bài kiểm tra của bạn bên dưới. Hệ thống sẽ tự động tính tổng điểm, vẽ biểu đồ tiến độ trực quan, và lưu tự động vào trình duyệt!
+                </p>
+
+                <!-- Dynamic SVG Score Chart -->
+                <div class="chart-container" style="position: relative; width: 100%; height: 200px; margin-bottom: 0.5rem;">
+                    <svg id="scoreChart" width="100%" height="100%" viewBox="0 0 600 200" preserveAspectRatio="none" style="overflow: visible;">
+                        <defs>
+                            <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="var(--secondary)" stop-opacity="0.25"/>
+                                <stop offset="100%" stop-color="var(--secondary)" stop-opacity="0"/>
+                            </linearGradient>
+                            <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="var(--primary)"/>
+                                <stop offset="100%" stop-color="var(--secondary)"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Grid lines -->
+                        <line x1="40" y1="30" x2="570" y2="30" stroke="rgba(255,255,255,0.02)" stroke-width="1"></line>
+                        <line x1="40" y1="65" x2="570" y2="65" stroke="rgba(255,255,255,0.02)" stroke-width="1"></line>
+                        <line x1="40" y1="100" x2="570" y2="100" stroke="rgba(255,255,255,0.02)" stroke-width="1"></line>
+                        <line x1="40" y1="135" x2="570" y2="135" stroke="rgba(255,255,255,0.02)" stroke-width="1"></line>
+                        <line x1="40" y1="170" x2="570" y2="170" stroke="rgba(255,255,255,0.05)" stroke-width="1"></line>
+                        
+                        <!-- Axis Labels -->
+                        <text x="20" y="34" fill="var(--text-muted)" font-size="8" text-anchor="middle">800</text>
+                        <text x="20" y="69" fill="var(--text-muted)" font-size="8" text-anchor="middle">600</text>
+                        <text x="20" y="104" fill="var(--text-muted)" font-size="8" text-anchor="middle">400</text>
+                        <text x="20" y="139" fill="var(--text-muted)" font-size="8" text-anchor="middle">200</text>
+                        <text x="20" y="174" fill="var(--text-muted)" font-size="8" text-anchor="middle">0</text>
+                        
+                        <g id="chartContent"></g>
+                    </svg>
+                    <div id="chartPlaceholder" class="chart-placeholder">
+                        <span>Hãy nhập điểm thi thử bên dưới để theo dõi sự tiến bộ bằng biểu đồ!</span>
+                    </div>
+                </div>
+
+                <table class="score-table">
+                    <thead>
+                        <tr>
+                            <th>Bài Thi</th>
+                            <th>Tuần Học</th>
+                            <th>Điểm Nghe (Listening /495)</th>
+                            <th>Điểm Đọc (Reading /495)</th>
+                            <th>Tổng Điểm (/990)</th>
+                            <th>Trạng Thái / Đánh Giá</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scoreTableBody">
+                        <!-- Dynamic Mock tests populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- STUDY DATABASE & APP LOGIC -->
+    <script>
+        // Data Structures for Weeks, Days, Vocab and Grammar
+        const weeksData = [
+            {
+                id: 1,
+                title: "Tuần 1: Nền tảng học tập 1",
+                desc: "Xây dựng các thì ngữ pháp cốt lõi và từ vựng Văn phòng/Doanh nghiệp/Tài chính cơ bản.",
+                days: ["T2", "T3", "T4", "T5", "T6", "T7"]
+            },
+            {
+                id: 2,
+                title: "Tuần 2: Nền tảng học tập 2",
+                desc: "Học các cấu trúc câu phổ biến trong đề thi: câu bị động, mệnh đề quan hệ, so sánh, câu điều kiện.",
+                days: ["T2", "T3", "T4", "T5", "T6", "T7"]
+            },
+            {
+                id: 3,
+                title: "Tuần 3: Luyện Part chuyên sâu 1",
+                desc: "Luyện chuyên sâu Part 1, 2 (Listening) và kỹ thuật nhận diện từ loại nhanh trong Part 5.",
+                days: ["T2", "T3", "T4", "T5", "T6", "T7"]
+            },
+            {
+                id: 4,
+                title: "Tuần 4: Luyện Part chuyên sâu 2",
+                desc: "Chiến thuật bắt keyword Part 3, 4 và xử lý đoạn điền từ nhanh trong Part 6.",
+                days: ["T2", "T3", "T4", "T5", "T6", "T7"]
+            },
+            {
+                id: 5,
+                title: "Tuần 5: Luyện Part 7 & Tổng ôn",
+                desc: "Chiến thuật đọc nhanh email, tin nhắn, đoạn kép/ba trong Part 7 và làm Mock Test đầu tiên.",
+                days: ["T2", "T3", "T4", "T5", "T6", "T7"]
+            },
+            {
+                id: 6,
+                title: "Tuần 6: Luyện đề & Tăng tốc",
+                desc: "Phân tích lỗi sai, bấm thời gian từng part và giải đề ETS thực tế số 2.",
+                days: ["T2", "T3", "T4", "T5", "T6", "T7"]
+            },
+            {
+                id: 7,
+                title: "Tuần 7: Tối ưu điểm số",
+                desc: "Khắc phục điểm yếu, học mẹo loại bẫy đồng âm và bẫy đoạn đọc nhiễu.",
+                days: ["T2", "T3", "T4", "T5", "T6", "T7"]
+            },
+            {
+                id: 8,
+                title: "Tuần 8: Vượt ngưỡng 600",
+                desc: "Thiết lập trạng thái như phòng thi thật, ôn tập toàn bộ sổ tay lỗi sai và chiến thắng!",
+                days: ["T2", "T3", "T4", "T5", "T6", "T7"]
+            }
+        ];
+
+        // Shadowing Script Database for Weeks 1 and 2
+        const shadowingDatabase = {
+            "Week1_T2": {
+                title: "Shadowing bài 1: Part 1 - Tả người Văn phòng",
+                text: "He is submitting the report to his colleague. She is filing some paperwork in the cabinet. The technician is repairing the photocopier in the corner. Employees are cooperating to meet the deadline at their workstations."
+            },
+            "Week1_T3": {
+                title: "Shadowing bài 2: Part 1 - Tả vật Doanh nghiệp",
+                text: "The inventory is stored in the warehouse. A printer is placed next to the computer on the desk. High quality merchandise is displayed on the retail shelves. A clear business strategy will boost our revenue."
+            },
+            "Week1_T4": {
+                title: "Shadowing bài 3: Part 1 - Tài chính & Giao dịch",
+                text: "We must stay within the budget for the new project. The accountant is reviewing the invoice and transaction details. Real estate is a valuable asset. The mortgage rates have dropped slightly this month."
+            },
+            "Week1_T5": {
+                title: "Shadowing bài 4: Part 1 - Sân bay & Du lịch",
+                text: "Passengers are boarding the plane at terminal two. The airport shuttle leaves every hour. It is necessary to keep your passport in a safe place. We have a five-hour layover in Paris before our flight departs."
+            },
+            "Week1_T6": {
+                title: "Shadowing bài 5: Part 2 - Sức khỏe & Cuộc hẹn",
+                text: "I have a dentist appointment at three PM today. The physician wrote a prescription for some preventive medicine. Does your health insurance cover the cost of the surgery? I wish you a very fast recovery."
+            },
+            "Week1_T7": {
+                title: "Shadowing bài 6: Podcast tiếng Anh giao tiếp",
+                text: "A balanced diet and regular exercise are crucial for a healthy lifestyle. Good nutrition helps boost the immune system. Taking daily vitamins can prevent chronic diseases and allergies."
+            },
+            "Week2_T2": {
+                title: "Shadowing bài 7: Part 2 - Hỏi đáp Tiếp thị",
+                text: "Who is in charge of promoting the new ad campaign? The marketing director is leading the survey on consumer habits. We distributed flyers in the city center to raise brand awareness."
+            },
+            "Week2_T3": {
+                title: "Shadowing bài 8: Part 2 - Hội thoại Sản xuất",
+                text: "Which assembly line produces the electronic components? The factory supervisor is conducting a safety inspection. All machinery must undergo regular maintenance to prevent defects."
+            },
+            "Week2_T4": {
+                title: "Shadowing bài 9: Part 3 - Nhân sự & Tuyển dụng",
+                text: "Have you reviewed the resume of the job applicant? Yes, she has the perfect qualifications for the personnel vacancy. I will schedule a formal interview with her tomorrow."
+            },
+            "Week2_T5": {
+                title: "Shadowing bài 10: Part 3 - Công nghệ & Mạng",
+                text: "The database server crashed due to a minor software glitch. Did you back up the files before installing the upgrade? We need to contact the wireless network administrator immediately."
+            },
+            "Week2_T6": {
+                title: "Shadowing bài 11: Part 4 - Mua sắm & Hoàn tiền",
+                text: "Welcome to the grand opening clearance sale. We offer a twenty percent discount on all items in aisle four. Remember to keep your receipt if you want a refund or product exchange."
+            },
+            "Week2_T7": {
+                title: "Shadowing bài 12: Đề Mini Test tổng quát",
+                text: "This is a baseline mini test to evaluate your current listening skills. Listen carefully to the conversations and choose the best answers. Try to avoid common traps like similar sounds."
+            }
+        };
+
+        const defaultShadowingScripts = [
+            {
+                title: "Shadowing nâng cao: ETS Listening - Short Conversation",
+                text: "Excuse me, I'm looking for the human resources office. Is it on the third floor? Yes, but you need to sign in at the security desk before taking the elevator. Make sure you have a photo ID with you."
+            },
+            {
+                title: "Shadowing nâng cao: ETS Listening - Business Presentation",
+                text: "Good morning, everyone. Today I'd like to present our quarterly sales revenue. Thanks to our new digital marketing campaign, we have seen a fifteen percent increase in retail orders this month."
+            },
+            {
+                title: "Shadowing nâng cao: ETS Listening - Airport Announcement",
+                text: "Attention passengers of flight eighty-two to Tokyo. Due to adverse weather conditions at the destination airport, our departure has been delayed by approximately forty-five minutes. Thank you for your patience."
+            }
+        ];
+
+        // 200 Essential TOEIC Words divided in 10 themes (20 words per theme)
+        // Linked to Day 1 to 10 of Weeks 1 and 2
+        const vocabDatabase = {
+            "Week1_T2": {
+                theme: "Office (Văn phòng)",
+                words: [
+                    { word: "colleague", pron: "/ˈkɒliːɡ/", pos: "noun", mean: "đồng nghiệp", example: "My colleague helped me with the financial report." },
+                    { word: "paperwork", pron: "/ˈpeɪpəwɜːk/", pos: "noun", mean: "công việc giấy tờ", example: "She spent the morning dealing with paperwork." },
+                    { word: "photocopier", pron: "/ˈfəʊtəʊkɒpiə/", pos: "noun", mean: "máy photocopy", example: "The office photocopier is out of order today." },
+                    { word: "memo", pron: "/ˈmeməʊ/", pos: "noun", mean: "thông báo nội bộ", example: "The manager sent a memo about the meeting." },
+                    { word: "schedule", pron: "/ˈʃedjuːl/", pos: "noun/verb", mean: "lịch trình / lên lịch", example: "We need to schedule a product launch." },
+                    { word: "file", pron: "/faɪl/", pos: "noun/verb", mean: "hồ sơ / sắp xếp tài liệu", example: "Please file these documents in alphabetical order." },
+                    { word: "cabinet", pron: "/ˈhæb.ɪ.nət/", pos: "noun", mean: "tủ tài liệu", example: "The folders are kept in the filing cabinet." },
+                    { word: "submit", pron: "/səbˈmɪt/", pos: "verb", mean: "nộp, trình duyệt", example: "Employees must submit weekly reports by Friday." },
+                    { word: "delay", pron: "/dɪˈleɪ/", pos: "verb/noun", mean: "trì hoãn", example: "The construction project was delayed." },
+                    { word: "agenda", pron: "/əˈdʒen.də/", pos: "noun", mean: "chương trình nghị sự", example: "The first item on the agenda is the budget." },
+                    { word: "brainstorm", pron: "/ˈbreɪn.stɔːm/", pos: "verb", mean: "động não suy nghĩ", example: "Let's brainstorm some ideas for the project." },
+                    { word: "collaborate", pron: "/kəˈlæb.ə.reɪt/", pos: "verb", mean: "hợp tác", example: "We collaborated with the marketing department." },
+                    { word: "deadline", pron: "/ˈded.laɪn/", pos: "noun", mean: "hạn chót", example: "The deadline for the application is tomorrow." },
+                    { word: "equip", pron: "/ɪˈkwɪp/", pos: "verb", mean: "trang bị", example: "The office is equipped with modern computers." },
+                    { word: "headquarters", pron: "/ˌhedˈkwɔː.təz/", pos: "noun", mean: "trụ sở chính", example: "The company's headquarters is in New York." },
+                    { word: "internship", pron: "/ˈɪn.tɜːn.ʃɪp/", pos: "noun", mean: "thực tập", example: "He applied for a summer marketing internship." },
+                    { word: "partition", pron: "/pɑːˈtɪʃ.ən/", pos: "noun", mean: "vách ngăn", example: "A partition separates his office from the rest." },
+                    { word: "workstation", pron: "/ˈwɜːk.steɪ.ʃən/", pos: "noun", mean: "chỗ làm việc", example: "Each worker has a personal workstation." },
+                    { word: "overtime", pron: "/ˈəʊ.və.taɪm/", pos: "noun/adv", mean: "làm thêm giờ", example: "They worked overtime to finish the contract." },
+                    { word: "productive", pron: "/prəˈdʌk.tɪv/", pos: "adjective", mean: "năng suất", example: "The brainstorm meeting was very productive." }
+                ]
+            },
+            "Week1_T3": {
+                theme: "Business (Kinh doanh)",
+                words: [
+                    { word: "acquire", pron: "/əˈkwaɪə/", pos: "verb", mean: "mua lại, đạt được", example: "The giant company acquired the startup." },
+                    { word: "merchandise", pron: "/ˈmɜː.tʃən.daɪs/", pos: "noun", mean: "hàng hóa", example: "The store offers high-quality merchandise." },
+                    { word: "profit", pron: "/ˈprɒf.ɪt/", pos: "noun", mean: "lợi nhuận", example: "The profits increased by fifteen percent." },
+                    { word: "negotiation", pron: "/nəˌɡəʊ.ʃiˈeɪ.ʃən/", pos: "noun", mean: "sự đàm phán", example: "The contract is currently under negotiation." },
+                    { word: "wholesale", pron: "/ˈhəʊl.seɪl/", pos: "noun/adj", mean: "bán buôn/sỉ", example: "They buy wholesale and sell to retailers." },
+                    { word: "retail", pron: "/ˈriː.teɪl/", pos: "noun/adj", mean: "bán lẻ", example: "The retail price is slightly higher." },
+                    { word: "monopoly", pron: "/məˈnɒp.əl.i/", pos: "noun", mean: "sự độc quyền", example: "They have a monopoly in local transport." },
+                    { word: "transaction", pron: "/trænˈzæk.ʃən/", pos: "noun", mean: "giao dịch", example: "The bank transaction took three seconds." },
+                    { word: "brand", pron: "/brænd/", pos: "noun", mean: "thương hiệu", example: "They created a global brand image." },
+                    { word: "strategy", pron: "/ˈstræt.ə.dʒi/", pos: "noun", mean: "chiến lược", example: "A clear marketing strategy is necessary." },
+                    { word: "client", pron: "/ˈklaɪ.ənt/", pos: "noun", mean: "khách hàng", example: "We prioritize our clients' requests." },
+                    { word: "competitor", pron: "/kəmˈpet.ɪ.tər/", pos: "noun", mean: "đối thủ cạnh tranh", example: "The competitor launched a similar service." },
+                    { word: "demand", pron: "/dɪˈmɑːnd/", pos: "noun/verb", mean: "nhu cầu", example: "Demand for organic food is rising." },
+                    { word: "enterprise", pron: "/ˈen.tə.praɪz/", pos: "noun", mean: "doanh nghiệp", example: "He owns a small family enterprise." },
+                    { word: "expansion", pron: "/ɪkˈspæn.ʃən/", pos: "noun", mean: "sự mở rộng", example: "Business expansion requires more staff." },
+                    { word: "inventory", pron: "/ˈɪn.vən.tər.i/", pos: "noun", mean: "hàng tồn kho", example: "They update the inventory once a month." },
+                    { word: "launch", pron: "/lɔːntʃ/", pos: "verb/noun", mean: "tung ra, khai trương", example: "The company will launch a new app next week." },
+                    { word: "partnership", pron: "/ˈpɑːt.nə.ʃɪp/", pos: "noun", mean: "quan hệ đối tác", example: "The two firms entered into a partnership." },
+                    { word: "revenue", pron: "/ˈrev.ən.juː/", pos: "noun", mean: "doanh thu", example: "Advertising brings a lot of revenue." },
+                    { word: "signature", pron: "/ˈsɪɡ.nə.tʃər/", pos: "noun", mean: "chữ ký", example: "Please put your signature on the last page." }
+                ]
+            },
+            "Week1_T4": {
+                theme: "Finance (Tài chính)",
+                words: [
+                    { word: "budget", pron: "/ˈbʌdʒ.ɪt/", pos: "noun/verb", mean: "ngân sách", example: "The annual budget must be approved." },
+                    { word: "invoice", pron: "/ˈɪn.vɔɪs/", pos: "noun", mean: "hóa đơn", example: "The invoice was sent to your office." },
+                    { word: "interest", pron: "/ˈɪn.trəst/", pos: "noun", mean: "lãi suất, mối quan tâm", example: "Bank interest rates dropped this month." },
+                    { word: "invest", pron: "/ɪnˈvest/", pos: "verb", mean: "đầu tư", example: "We decided to invest in real estate." },
+                    { word: "receipt", pron: "/rɪˈsiːt/", pos: "noun", mean: "biên lai", example: "Keep your receipt for tax reasons." },
+                    { word: "accountant", pron: "/əˈkaʊn.tənt/", pos: "noun", mean: "kế toán viên", example: "The accountant is preparing our taxes." },
+                    { word: "asset", pron: "/ˈæs.et/", pos: "noun", mean: "tài sản", example: "Good software is a company's main asset." },
+                    { word: "bankruptcy", pron: "/ˈbæŋ.krəpt.si/", pos: "noun", mean: "sự phá sản", example: "The economic crisis caused bankruptcy." },
+                    { word: "debt", pron: "/det/", pos: "noun", mean: "khoản nợ", example: "They paid off all their debts recently." },
+                    { word: "dividend", pron: "/ˈdɪv.ɪ.dend/", pos: "noun", mean: "cổ tức", example: "Shareholders received a high dividend." },
+                    { word: "expenditure", pron: "/ɪkˈspen.dɪ.tʃər/", pos: "noun", mean: "chi phí tiêu dùng", example: "We must reduce our business expenditure." },
+                    { word: "mortgage", pron: "/ˈmɔː.ɡɪdʒ/", pos: "noun", mean: "thế chấp", example: "They took out a mortgage to buy the office." },
+                    { word: "reimburse", pron: "/ˌriː.ɪmˈbɜːs/", pos: "verb", mean: "hoàn tiền, bồi hoàn", example: "The firm reimburses travel expenses." },
+                    { word: "audit", pron: "/ˈɔː.dɪt/", pos: "noun/verb", mean: "kiểm toán", example: "The yearly financial audit will start Monday." },
+                    { word: "inflation", pron: "/ɪnˈfleɪ.ʃən/", pos: "noun", mean: "lạm phát", example: "Inflation is affecting food prices." },
+                    { word: "ledger", pron: "/ˈledʒ.ər/", pos: "noun", mean: "sổ cái kế toán", example: "Please check the numbers in the ledger." },
+                    { word: "portfolio", pron: "/ˌpɔːtˈfəʊ.li.ə/", pos: "noun", mean: "danh mục đầu tư", example: "He has a diverse investment portfolio." },
+                    { word: "subsidy", pron: "/ˈsʌb.sɪ.di/", pos: "noun", mean: "trợ cấp", example: "The government gave a subsidy to farms." },
+                    { word: "yield", pron: "/jiːld/", pos: "noun/verb", mean: "lợi nhuận sản lượng", example: "The investment yields high returns." },
+                    { word: "revenue", pron: "/ˈrev.ən.juː/", pos: "noun", mean: "doanh thu", example: "Monthly revenue peaked in December." }
+                ]
+            },
+            "Week1_T5": {
+                theme: "Travel (Du lịch)",
+                words: [
+                    { word: "baggage", pron: "/ˈbæɡ.ɪdʒ/", pos: "noun", mean: "hành lý", example: "The passengers claimed their baggage." },
+                    { word: "itinerary", pron: "/aɪˈtɪn.ər.ər.i/", pos: "noun", mean: "lịch trình chuyến đi", example: "We followed the tour guide's itinerary." },
+                    { word: "boarding", pron: "/ˈbɔː.dɪŋ/", pos: "noun", mean: "lên máy bay/tàu", example: "Boarding will start in ten minutes." },
+                    { word: "destination", pron: "/ˌdes.tɪˈneɪ.ʃən/", pos: "noun", mean: "điểm đến", example: "Paris is a popular tourist destination." },
+                    { word: "accommodation", pron: "/əˌkɒm.əˈdeɪ.ʃən/", pos: "noun", mean: "chỗ ở", example: "The hotel offers luxury accommodation." },
+                    { word: "customs", pron: "/ˈkʌs.təmz/", pos: "noun", mean: "hải quan", example: "We passed through customs without delay." },
+                    { word: "delay", pron: "/dɪˈleɪ/", pos: "verb/noun", mean: "trì hoãn", example: "The flight delay lasted two hours." },
+                    { word: "reservation", pron: "/ˌrez.əˈveɪ.ʃən/", pos: "noun", mean: "đặt chỗ trước", example: "I made a dinner reservation for two." },
+                    { word: "shuttle", pron: "/ˈʃʌt.əl/", pos: "noun", mean: "xe đưa đón", example: "The airport shuttle runs every hour." },
+                    { word: "layover", pron: "/ˈleɪˌəʊ.vər/", pos: "noun", mean: "điểm dừng nghỉ giữa chặng", example: "We had a five-hour layover in Tokyo." },
+                    { word: "cancellation", pron: "/ˌkæn.səlˈeɪ.ʃən/", pos: "noun", mean: "sự hủy chuyến", example: "Last-minute cancellation fees apply." },
+                    { word: "complimentary", pron: "/ˌkɒm.plɪˈmen.tər.i/", pos: "adjective", mean: "miễn phí", example: "The hotel offers complimentary breakfast." },
+                    { word: "departure", pron: "/dɪˈpɑː.tʃər/", pos: "noun", mean: "khởi hành", example: "The departure time is scheduled for 9 AM." },
+                    { word: "fare", pron: "/feər/", pos: "noun", mean: "giá vé tàu xe", example: "Train fares are rising next month." },
+                    { word: "passport", pron: "/ˈpɑːs.pɔːt/", pos: "noun", mean: "hộ chiếu", example: "Keep your passport in a safe place." },
+                    { word: "sightseeing", pron: "/ˈsaɪtˌsiː.ɪŋ/", pos: "noun", mean: "ngắm cảnh", example: "We went sightseeing around London." },
+                    { word: "terminal", pron: "/ˈtɜː.mɪ.nəl/", pos: "noun", mean: "nhà ga sân bay", example: "International flights leave terminal 2." },
+                    { word: "vacancy", pron: "/ˈveɪ.kən.si/", pos: "noun", mean: "phòng trống, chỗ trống", example: "The motel has no vacancy tonight." },
+                    { word: "embark", pron: "/ɪmˈbɑːk/", pos: "verb", mean: "lên tàu/bắt đầu", example: "They embarked on a cruise ship yesterday." },
+                    { word: "steward", pron: "/ˈstjʊə.d/", pos: "noun", mean: "tiếp viên", example: "The flight steward was very helpful." }
+                ]
+            },
+            "Week1_T6": {
+                theme: "Health (Sức khỏe)",
+                words: [
+                    { word: "appointment", pron: "/əˈpɔɪnt.mənt/", pos: "noun", mean: "cuộc hẹn", example: "I have a dentist appointment at 3 PM." },
+                    { word: "prescription", pron: "/prɪˈskrɪp.ʃən/", pos: "noun", mean: "đơn thuốc", example: "The doctor wrote a prescription for antibiotics." },
+                    { word: "symptom", pron: "/ˈsɪmp.təm/", pos: "noun", mean: "triệu chứng", example: "Fever is a common symptom of flu." },
+                    { word: "clinic", pron: "/ˈklɪn.ɪk/", pos: "noun", mean: "phòng khám", example: "The health clinic is near my office." },
+                    { word: "nutrition", pron: "/njuːˈtrɪʃ.ən/", pos: "noun", mean: "dinh dưỡng", example: "Good nutrition is key to healthy living." },
+                    { word: "dosage", pron: "/ˈdəʊ.sɪdʒ/", pos: "noun", mean: "liều lượng", example: "Do not exceed the recommended dosage." },
+                    { word: "physician", pron: "/fɪˈzɪʃ.ən/", pos: "noun", mean: "bác sĩ điều trị", example: "The physician examined the patient." },
+                    { word: "hygiene", pron: "/ˈhaɪ.dʒiːn/", pos: "noun", mean: "vệ sinh dịch tễ", example: "Personal hygiene stops bacterial spread." },
+                    { word: "therapy", pron: "/ˈθer.ə.pi/", pos: "noun", mean: "liệu pháp", example: "Physical therapy helped his back pain." },
+                    { word: "vaccine", pron: "/ˈvæk.siːn/", pos: "noun", mean: "vắc-xin", example: "The vaccine prevents viral infection." },
+                    { word: "diagnose", pron: "/ˌdaɪ.əɡˈnəʊz/", pos: "verb", mean: "chẩn đoán", example: "He was diagnosed with high blood pressure." },
+                    { word: "allergy", pron: "/ˈæl.ə.dʒi/", pos: "noun", mean: "dị ứng", example: "She has a pollen allergy." },
+                    { word: "chronic", pron: "/ˈkrɒn.ɪk/", pos: "adjective", mean: "mãn tính", example: "He suffers from chronic back pain." },
+                    { word: "epidemic", pron: "/ˌep.ɪˈdem.ɪk/", pos: "noun", mean: "bệnh dịch", example: "The flu epidemic spread rapidly." },
+                    { word: "immune", pron: "/ɪˈmjuːn/", pos: "adjective", mean: "miễn dịch", example: "Healthy diets boost immune systems." },
+                    { word: "insurance", pron: "/ɪnˈʃɔː.rəns/", pos: "noun", mean: "bảo hiểm", example: "Does your health insurance cover dental?" },
+                    { word: "pharmacy", pron: "/ˈfɑː.mə.si/", pos: "noun", mean: "nhà thuốc", example: "You can buy medicine at the pharmacy." },
+                    { word: "recovery", pron: "/rɪˈkʌv.ər.i/", pos: "noun", mean: "sự hồi phục", example: "We wish you a fast recovery." },
+                    { word: "surgery", pron: "/ˈsɜː.dʒər.i/", pos: "noun", mean: "phẫu thuật", example: "The surgery took four hours." },
+                    { word: "preventive", pron: "/prɪˈven.tɪv/", pos: "adjective", mean: "phòng bệnh", example: "Regular checks are great preventive care." }
+                ]
+            },
+            "Week2_T2": {
+                theme: "Marketing (Tiếp thị)",
+                words: [
+                    { word: "advertise", pron: "/ˈæd.və.taɪz/", pos: "verb", mean: "quảng cáo", example: "They advertise products on social media." },
+                    { word: "campaign", pron: "/kæmˈpeɪn/", pos: "noun", mean: "chiến dịch", example: "The new ad campaign was very popular." },
+                    { word: "consumer", pron: "/kənˈsjuː.mər/", pos: "noun", mean: "người tiêu dùng", example: "Consumer habits are changing rapidly." },
+                    { word: "market", pron: "/ˈmɑː.kɪt/", pos: "noun/verb", mean: "thị trường / bán hàng", example: "They want to expand their target market." },
+                    { word: "promote", pron: "/prəˈməʊt/", pos: "verb", mean: "quảng bá, thăng chức", example: "They promote healthy diets at schools." },
+                    { word: "slogan", pron: "/ˈsləʊ.ɡən/", pos: "noun", mean: "khẩu hiệu quảng cáo", example: "Their slogan is easy to remember." },
+                    { word: "survey", pron: "/ˈsɜː.veɪ/", pos: "noun/verb", mean: "khảo sát", example: "We conducted a survey on customer satisfaction." },
+                    { word: "target", pron: "/ˈtɑː.ɡɪt/", pos: "noun/verb", mean: "mục tiêu / hướng đến", example: "They target young professionals." },
+                    { word: "awareness", pron: "/əˈweə.nəs/", pos: "noun", mean: "sự nhận thức", example: "The brand wants to raise public awareness." },
+                    { word: "discount", pron: "/ˈdɪs.kaʊnt/", pos: "noun/verb", mean: "giảm giá", example: "We offer a twenty percent discount online." },
+                    { word: "endorse", pron: "/ɪnˈdɔːs/", pos: "verb", mean: "bảo chứng, ủng hộ", example: "Celebrities endorse this cosmetics brand." },
+                    { word: "flyer", pron: "/ˈflaɪ.ər/", pos: "noun", mean: "tờ rơi quảng cáo", example: "We distributed flyers in the city center." },
+                    { word: "segment", pron: "/ˈseɡ.mənt/", pos: "noun", mean: "phân khúc thị trường", example: "They belong to the premium market segment." },
+                    { word: "launch", pron: "/lɔːntʃ/", pos: "verb/noun", mean: "ra mắt sản phẩm", example: "The product launch is next month." },
+                    { word: "branding", pron: "/ˈbræn.dɪŋ/", pos: "noun", mean: "xây dựng thương hiệu", example: "Branding is crucial for business growth." },
+                    { word: "exhibition", pron: "/ˌek.sɪˈbɪʃ.ən/", pos: "noun", mean: "triển lãm", example: "The trade exhibition attracted many buyers." },
+                    { word: "focus", pron: "/ˈfəʊ.kəs/", pos: "verb/noun", mean: "trọng tâm, tập trung", example: "The focus of this ad is quality." },
+                    { word: "sponsor", pron: "/ˈspɒn.sər/", pos: "verb/noun", mean: "tài trợ", example: "They sponsor local athletic events." },
+                    { word: "feedback", pron: "/ˈfiːd.bæk/", pos: "noun", mean: "phản hồi", example: "Customer feedback was mostly positive." },
+                    { word: "merchandise", pron: "/ˈmɜː.tʃən.daɪs/", pos: "noun", mean: "hàng hóa tiếp thị", example: "The band sells shirts and other merchandise." }
+                ]
+            },
+            "Week2_T3": {
+                theme: "Manufacturing (Sản xuất)",
+                words: [
+                    { word: "assembly", pron: "/əˈsem.bli/", pos: "noun", mean: "dây chuyền lắp ráp", example: "Cars are built on the assembly line." },
+                    { word: "component", pron: "/kəmˈpəʊ.nənt/", pos: "noun", mean: "linh kiện, thành phần", example: "Electronic components are imported." },
+                    { word: "factory", pron: "/ˈfæk.tər.i/", pos: "noun", mean: "nhà máy", example: "The factory produces thousands of toys." },
+                    { word: "machinery", pron: "/məˈʃiː.nər.i/", pos: "noun", mean: "máy móc thiết bị", example: "Modern machinery speeds up production." },
+                    { word: "output", pron: "/ˈaʊt.pʊt/", pos: "noun", mean: "sản lượng đầu ra", example: "The factory's weekly output is rising." },
+                    { word: "raw", pron: "/rɔː/", pos: "adjective", mean: "nguyên liệu thô", example: "Wood is the raw material for paper." },
+                    { word: "warehouse", pron: "/ˈweə.haʊs/", pos: "noun", mean: "kho chứa hàng", example: "Boxes are stored in the warehouse." },
+                    { word: "automation", pron: "/ˌɔː.təˈmeɪ.ʃən/", pos: "noun", mean: "tự động hóa", example: "Factory automation reduced staff costs." },
+                    { word: "defect", pron: "/ˈdiː.fekt/", pos: "noun", mean: "lỗi sản phẩm, khuyết tật", example: "The inspector found a defect in the glass." },
+                    { word: "inspection", pron: "/ɪnˈspek.ʃən/", pos: "noun", mean: "sự thanh tra kiểm tra", example: "Quality inspection is strict here." },
+                    { word: "maintenance", pron: "/ˈmeɪn.tən.əns/", pos: "noun", mean: "bảo trì máy móc", example: "Regular maintenance prevents breakdowns." },
+                    { word: "operator", pron: "/ˈɒp.ər.eɪ.tər/", pos: "noun", mean: "người vận hành máy", example: "Ask the machine operator for help." },
+                    { word: "surplus", pron: "/ˈsɜː.pləs/", pos: "noun", mean: "thặng dư, dư thừa", example: "They sold the surplus inventory cheaply." },
+                    { word: "specification", pron: "/ˌspes.ɪ.fɪˈkeɪ.ʃən/", pos: "noun", mean: "thông số kỹ thuật", example: "The engine meets our strict specifications." },
+                    { word: "production", pron: "/prəˈdʌk.ʃən/", pos: "noun", mean: "sản xuất", example: "We need to boost production efficiency." },
+                    { word: "supervisor", pron: "/ˈsuː.pə.vaɪ.zər/", pos: "noun", mean: "người giám sát", example: "The warehouse supervisor checks shipments." },
+                    { word: "safety", pron: "/ˈseɪf.ti/", pos: "noun", mean: "sự an toàn lao động", example: "Wear a helmet for safety in the factory." },
+                    { word: "logistics", pron: "/ləˈdʒɪs.tɪks/", pos: "noun", mean: "hậu cần, kho vận", example: "Our logistics team coordinates shipping." },
+                    { word: "wholesale", pron: "/ˈhəʊl.seɪl/", pos: "noun/adj", mean: "bán sỉ sản phẩm", example: "Wholesale manufacturing drops costs." },
+                    { word: "standards", pron: "/ˈstæn.dəd/", pos: "noun", mean: "tiêu chuẩn chất lượng", example: "All products meet high safety standards." }
+                ]
+            },
+            "Week2_T4": {
+                theme: "Personnel (Nhân sự)",
+                words: [
+                    { word: "recruit", pron: "/rɪˈkruːt/", pos: "verb/noun", mean: "tuyển dụng / lính mới", example: "They recruit fresh graduates every year." },
+                    { word: "resume", pron: "/ˈrez.juː.meɪ/", pos: "noun", mean: "sơ yếu lý lịch", example: "Please send your resume to HR." },
+                    { word: "salary", pron: "/ˈsæl.ər.i/", pos: "noun", mean: "lương định kỳ", example: "The salary is paid on the last day." },
+                    { word: "qualification", pron: "/ˌkwɒl.ɪ.fɪˈkeɪ.ʃən/", pos: "noun", mean: "bằng cấp chuyên môn", example: "She has the perfect qualifications for it." },
+                    { word: "interview", pron: "/ˈɪn.tə.vjuː/", pos: "noun/verb", mean: "phỏng vấn", example: "The job interview lasted half an hour." },
+                    { word: "benefit", pron: "/ˈben.ɪ.fɪt/", pos: "noun/verb", mean: "phúc lợi / hưởng lợi", example: "Health insurance is a key employee benefit." },
+                    { word: "pension", pron: "/ˈpen.ʃən/", pos: "noun", mean: "lương hưu", example: "He retired and lives on a small pension." },
+                    { word: "promotion", pron: "/prəˈməʊ.ʃən/", pos: "noun", mean: "thăng chức, quảng bá", example: "She received a promotion to manager." },
+                    { word: "resignation", pron: "/ˌrez.ɪɡˈneɪ.ʃən/", pos: "noun", mean: "sự từ chức, xin nghỉ", example: "He handed in his resignation yesterday." },
+                    { word: "termination", pron: "/ˌtɜː.mɪˈneɪ.ʃən/", pos: "noun", mean: "chấm dứt hợp đồng", example: "Contract termination requires one month notice." },
+                    { word: "appraisal", pron: "/əˈpreɪ.zəl/", pos: "noun", mean: "đánh giá năng lực", example: "Annual performance appraisals start next week." },
+                    { word: "probation", pron: "/prəˈbeɪ.ʃən/", pos: "noun", mean: "thời gian thử việc", example: "His probation period lasts three months." },
+                    { word: "vacancy", pron: "/ˈveɪ.kən.si/", pos: "noun", mean: "chỗ trống tuyển dụng", example: "There is an IT vacancy in our team." },
+                    { word: "colleague", pron: "/ˈcol.eeg/", pos: "noun", mean: "đồng nghiệp", example: "I have great relationship with colleagues." },
+                    { word: "orientation", pron: "/ˌɔː.ri.enˈteɪ.ʃən/", pos: "noun", mean: "buổi định hướng", example: "Orientation for new hires starts tomorrow." },
+                    { word: "applicant", pron: "/ˈæp.lɪ.kənt/", pos: "noun", mean: "người ứng tuyển", example: "We interviewed ten applicants today." },
+                    { word: "severance", pron: "/ˈsev.ər.əns/", pos: "noun", mean: "trợ cấp thôi việc", example: "She received a generous severance package." },
+                    { word: "overtime", pron: "/ˈəʊ.və.taɪm/", pos: "noun", mean: "thêm giờ", example: "Overtime pay is double the standard rate." },
+                    { word: "commute", pron: "/kəˈmjuːt/", pos: "verb/noun", mean: "đi làm hàng ngày", example: "She commutes to work by subway." },
+                    { word: "labor", pron: "/ˈleɪ.bər/", pos: "noun", mean: "lao động", example: "Manual labor is required in the warehouse." }
+                ]
+            },
+            "Week2_T5": {
+                theme: "Technology (Công nghệ)",
+                words: [
+                    { word: "database", pron: "/ˈdeɪ.tə.beɪs/", pos: "noun", mean: "cơ sở dữ liệu", example: "Our customer database is highly secure." },
+                    { word: "software", pron: "/ˈsɒft.weər/", pos: "noun", mean: "phần mềm máy tính", example: "We updated the accounting software." },
+                    { word: "network", pron: "/ˈnet.wɜːk/", pos: "noun/verb", mean: "mạng lưới kết nối", example: "The office wireless network is down." },
+                    { word: "device", pron: "/dɪˈvaɪs/", pos: "noun", mean: "thiết bị phần cứng", example: "Turn off all electronic devices on flight." },
+                    { word: "upgrade", pron: "/ʌpˈɡreɪd/", pos: "verb/noun", mean: "nâng cấp", example: "We must upgrade our server hardware." },
+                    { word: "backup", pron: "/ˈbæk.ʌp/", pos: "noun/verb", mean: "sao lưu dự phòng", example: "Keep a backup of all critical files." },
+                    { word: "security", pron: "/sɪˈkjʊə.rɪ.ti/", pos: "noun", mean: "an ninh, bảo mật", example: "Cybersecurity measures are updated daily." },
+                    { word: "crash", pron: "/kræʃ/", pos: "verb/noun", mean: "sự cố máy hỏng, sập", example: "The system crashed due to database load." },
+                    { word: "interface", pron: "/ˈɪn.tə.feɪs/", pos: "noun", mean: "giao diện người dùng", example: "The app has a user-friendly interface." },
+                    { word: "protocol", pron: "/ˈprəʊ.tə.kɒl/", pos: "noun", mean: "giao thức kết nối", example: "They followed the standard security protocol." },
+                    { word: "broadband", pron: "/ˈbrɔːd.bænd/", pos: "noun", mean: "băng thông rộng", example: "We installed high-speed broadband." },
+                    { word: "encrypt", pron: "/ɪnˈkrɪpt/", pos: "verb", mean: "mã hóa dữ liệu", example: "Passwords are encrypted in our database." },
+                    { word: "hardware", pron: "/ˈhɑːd.weər/", pos: "noun", mean: "phần cứng", example: "Computers, printers are examples of hardware." },
+                    { word: "installation", pron: "/ˌɪn.stəˈleɪ.ʃən/", pos: "noun", mean: "sự cài đặt", example: "Software installation takes five minutes." },
+                    { word: "compatibility", pron: "/kəmˌpæt.əˈbɪl.ə.ti/", pos: "noun", mean: "tính tương thích", example: "Check file compatibility before opening." },
+                    { word: "processor", pron: "/ˈprəʊ.ses.ər/", pos: "noun", mean: "bộ vi xử lý", example: "This computer has a fast Intel processor." },
+                    { word: "server", pron: "/ˈsɜː.vər/", pos: "noun", mean: "máy chủ hệ thống", example: "The web server handles thousands of requests." },
+                    { word: "glitch", pron: "/ɡlɪtʃ/", pos: "noun", mean: "lỗi kỹ thuật nhỏ", example: "A minor software glitch delayed the launch." },
+                    { word: "wireless", pron: "/ˈwaɪə.ləs/", pos: "adjective", mean: "không dây", example: "We buy wireless keyboard and mouse." },
+                    { word: "automated", pron: "/ˈɔː.tə.meɪ.tɪd/", pos: "adjective", mean: "tự động hóa", example: "Our backup process is fully automated." }
+                ]
+            },
+            "Week2_T6": {
+                theme: "Shopping (Mua sắm)",
+                words: [
+                    { word: "receipt", pron: "/rɪˈsiːt/", pos: "noun", mean: "biên lai hóa đơn", example: "Please keep your receipt for refunds." },
+                    { word: "refund", pron: "/ˈriː.fʌnd/", pos: "noun/verb", mean: "hoàn tiền", example: "Customers can get a full refund within a week." },
+                    { word: "bargain", pron: "/ˈbɑː.ɡɪn/", pos: "noun/verb", mean: "món hời / trả giá", example: "This laptop is a bargain at five hundred dollars." },
+                    { word: "cashier", pron: "/kæʃˈɪər/", pos: "noun", mean: "nhân viên thu ngân", example: "The cashier scanned my items quickly." },
+                    { word: "aisle", pron: "/aɪl/", pos: "noun", mean: "lối đi giữa các quầy", example: "Milk is located in aisle number four." },
+                    { word: "warranty", pron: "/ˈwɒr.ən.ti/", pos: "noun", mean: "sự bảo hành", example: "This TV has a three-year warranty." },
+                    { word: "customer", pron: "/ˈkʌs.tə.mər/", pos: "noun", mean: "khách hàng mua sắm", example: "Customer service solved my issues." },
+                    { word: "coupon", pron: "/ˈkuː.pɒn/", pos: "noun", mean: "phiếu giảm giá", example: "Use this coupon for a ten percent discount." },
+                    { word: "delivery", pron: "/dɪˈlɪv.ər.i/", pos: "noun", mean: "sự giao hàng", example: "We offer free home delivery on big items." },
+                    { word: "exchange", pron: "/ɪksˈtʃeɪndʒ/", pos: "verb/noun", mean: "đổi hàng khác", example: "I want to exchange this shirt for a larger size." },
+                    { word: "retail", pron: "/ˈriː.teɪl/", pos: "noun/adj", mean: "bán lẻ", example: "Retail sales increased during the holidays." },
+                    { word: "wholesale", pron: "/ˈhəʊl.seɪl/", pos: "noun/adj", mean: "bán buôn/sỉ", example: "Buying wholesale is much cheaper." },
+                    { word: "catalog", pron: "/ˈkæt.əl.ɒɡ/", pos: "noun", mean: "mục lục sản phẩm", example: "Browse our latest catalog online." },
+                    { word: "merchant", pron: "/ˈmɜː.tʃənt/", pos: "noun", mean: "thương gia", example: "Online merchants accept credit cards." },
+                    { word: "defect", pron: "/ˈdiː.fekt/", pos: "noun", mean: "lỗi sản phẩm", example: "Return the product if there is a defect." },
+                    { word: "purchase", pron: "/ˈpɜː.tʃəs/", pos: "verb/noun", mean: "mua sắm / vật mua", example: "I made a secure online purchase." },
+                    { word: "clearance", pron: "/ˈklɪə.rəns/", pos: "noun", mean: "xả hàng thanh lý", example: "This store has a big clearance sale today." },
+                    { word: "inventory", pron: "/ˈɪn.vən.tər.i/", pos: "noun", mean: "hàng hóa trong kho", example: "Inventory checks run every Saturday." },
+                    { word: "brand", pron: "/brænd/", pos: "noun", mean: "thương hiệu sản phẩm", example: "I prefer this brand of shoes." },
+                    { word: "trolley", pron: "/ˈtrɒl.i/", pos: "noun", mean: "xe đẩy siêu thị", example: "Put your shopping items in the trolley." }
+                ]
+            }
+        };
+
+        // Grammar Lessons Database
+        const grammarDatabase = {
+            "Week1_T2": {
+                title: "Các thì đơn cơ bản (Simple Tenses)",
+                formula: "HTĐ: S + V(s/es) | QKĐ: S + V2/ed | TLĐ: S + will + V",
+                desc: "HTĐ diễn tả chân lý, thói quen (every day). QKĐ diễn tả việc đã chấm dứt trong quá khứ (yesterday, ago). TLĐ diễn tả quyết định nhất thời hoặc dự báo tương lai (tomorrow, next week).",
+                usage: "• Thì hiện tại đơn: Thói quen, sự thật hiển nhiên (always, usually, every day).<br>• Thì quá khứ đơn: Sự việc đã chấm dứt hoàn toàn ở quá khứ (yesterday, last year, 2 years ago).<br>• Thì tương lai đơn: Quyết định ngay lúc nói, lời hứa hoặc dự đoán (tomorrow, next week, soon).",
+                examples: "1. She <b>submits</b> the paperwork daily. (Hiện tại đơn)<br>2. They <b>delayed</b> the flight yesterday due to storm. (Quá khứ đơn)<br>3. We <b>will schedule</b> a brainstorming session tomorrow. (Tương lai đơn)"
+            },
+            "Week1_T3": {
+                title: "Thì Tiếp Diễn & Hoàn Thành (Continuous & Perfect Tenses)",
+                formula: "TD: S + be + V-ing | HTHT: S + have/has + V3/ed",
+                desc: "Tiếp diễn diễn tả hành động đang xảy ra tại mốc thời gian cụ thể (now, at this time). Hiện tại hoàn thành diễn tả việc bắt đầu ở quá khứ kéo dài đến hiện tại (since, for, already, recently, yet).",
+                usage: "• Hiện tại tiếp diễn: Đang xảy ra lúc nói hoặc kế hoạch tương lai (now, at the moment).<br>• Hiện tại hoàn thành: Kết quả hành động ở quá khứ nhưng ảnh hưởng hiện tại, hoặc kinh nghiệm (since, for, just, already, yet, recently).",
+                examples: "1. The technician <b>is repairing</b> the photocopier now. (Tiếp diễn)<br>2. Our competitor <b>has launched</b> a new strategy recently. (Hoàn thành)<br>3. We <b>have collaborated</b> with their team for 3 years. (Hoàn thành)"
+            },
+            "Week1_T4": {
+                title: "Ôn tập các thì động từ (Verb Tenses Review)",
+                formula: "Phân biệt cách chia động từ theo mốc thời gian",
+                desc: "Thực hành làm bài tập kết hợp các thì. Lưu ý trạng từ chỉ thời gian để chọn đáp án đúng: since/for (HTHT), ago/yesterday (QKĐ), next/tomorrow (TLĐ).",
+                usage: "• Cần xác định mốc thời gian trong câu trước khi chọn thì.<br>• Chú ý sự hòa hợp chủ ngữ và động từ (Chủ ngữ số ít đi với V-s/es hoặc has/is).<br>• Nhận dạng trạng từ thời gian là chiếc chìa khóa vàng để lấy điểm nhanh.",
+                examples: "1. Since 2022, our company <b>has acquired</b> three startups. (HTHT vì có 'Since')<br>2. Last month, we <b>budgeted</b> $50,000 for marketing. (Quá khứ đơn vì có 'Last month')<br>3. I <b>will receive</b> the final invoice tomorrow. (Tương lai đơn vì có 'tomorrow')"
+            },
+            "Week1_T5": {
+                title: "Từ loại cơ bản (Nouns, Pronouns, Adjectives, Adverbs)",
+                formula: "Vị trí: Adj + N | Adv + V | Be + Adj | V thường + Adv",
+                desc: "N (Danh từ) làm chủ ngữ/tân ngữ. Pron (Đại từ) thay thế cho N. Adj (Tính từ) bổ nghĩa cho N đứng trước. Adv (Trạng từ) bổ nghĩa cho V, Adj hoặc cả câu.",
+                usage: "• Tính từ (Adj) bổ nghĩa danh từ, đứng trước danh từ hoặc sau 'be'.<br>• Trạng từ (Adv) bổ nghĩa cho động từ thường, đứng trước hoặc sau động từ, hoặc bổ nghĩa cho cả câu (thường tận cùng bằng đuôi -ly).",
+                examples: "1. We had a <b>productive</b> meeting yesterday. (Adj + N)<br>2. The staff works <b>productively</b> to meet the deadline. (V thường + Adv)<br>3. She completed the <b>paperwork</b> very <b>quickly</b>. (N & Adv)"
+            },
+            "Week1_T6": {
+                title: "Giới từ & Liên từ (Prepositions & Conjunctions)",
+                formula: "Prep + N/V-ing | Clause + Conjunction + Clause",
+                desc: "Giới từ chỉ thời gian/nơi chốn (in, on, at, during). Liên từ nối các mệnh đề lại với nhau (and, but, or, because, although, when, while).",
+                usage: "• Giới từ (Preposition) phải đi kèm một cụm danh từ hoặc V-ing.<br>• Liên từ (Conjunction) dùng nối hai mệnh đề độc lập hoặc phụ thuộc. Luôn xác định xem sau chỗ trống là Mệnh đề hay Cụm danh từ.",
+                examples: "1. The meeting was delayed <b>because of</b> the heavy rain. (Giới từ + Cụm N)<br>2. The meeting was delayed <b>because</b> it rained heavily. (Liên từ + Mệnh đề)<br>3. She worked overtime <b>although</b> she was tired. (Liên từ + Mệnh đề)"
+            },
+            "Week2_T2": {
+                title: "Câu bị động (Passive Voice)",
+                formula: "S + be + V3/ed (+ by O)",
+                desc: "Dùng khi chủ ngữ là vật bị tác động hoặc đối tượng thực hiện hành động không quan trọng. Chia động từ 'be' tương ứng với thì của câu gốc.",
+                usage: "• Luôn kiểm tra xem chủ ngữ là người hay vật thực hiện hành động.<br>• Dấu hiệu thường thấy: Có giới từ 'by' chỉ tác nhân ở phía sau.<br>• Cấu trúc động từ luôn phải có 'be' (am/is/are/was/were/been) kết hợp với động từ cột 3 hoặc thêm -ed.",
+                examples: "1. The office <b>is equipped</b> with modern computers. (Hiện tại bị động)<br>2. The contract <b>was signed</b> by the client yesterday. (Quá khứ bị động)<br>3. A new application <b>will be launched</b> next week. (Tương lai bị động)"
+            },
+            "Week2_T3": {
+                title: "Mệnh đề quan hệ (Relative Clauses)",
+                formula: "Who (chỉ người) | Which (chỉ vật) | That (chung) | Whose + N",
+                desc: "Dùng để giải thích rõ hơn cho danh từ đứng trước nó. Who làm chủ ngữ chỉ người, Whom làm tân ngữ chỉ người, Which chỉ vật, Whose chỉ sở hữu.",
+                usage: "• Who/Whom thay thế cho danh từ chỉ người.<br>• Which thay thế cho danh từ chỉ vật.<br>• Whose chỉ sự sở hữu, bắt buộc theo sau bởi danh từ không có mạo từ (a/an/the).<br>• That có thể thay thế cho Who/Which trong mệnh đề xác định.",
+                examples: "1. The colleague <b>who</b> helped me with the paperwork is very nice. (Who làm S chỉ người)<br>2. The factory <b>which</b> produces toys is expanding. (Which chỉ vật)<br>3. The client <b>whose</b> signature is on the contract is from New York. (Whose chỉ sở hữu)"
+            },
+            "Week2_T4": {
+                title: "Câu so sánh (Comparisons)",
+                formula: "Hơn: short-er / more + long | Nhất: the short-est / the most + long",
+                desc: "So sánh bằng: as + adj/adv + as. So sánh hơn: dùng than. So sánh nhất: dùng the. Chú ý tính từ ngắn (1 âm tiết) và tính từ dài (>=2 âm tiết).",
+                usage: "• So sánh bằng: as [tính từ/trạng từ] as.<br>• So sánh hơn: Thêm đuôi '-er' vào tính từ ngắn hoặc dùng 'more' trước tính từ dài, kèm theo 'than'.<br>• So sánh nhất: Thêm đuôi '-est' vào tính từ ngắn hoặc dùng 'most' trước tính từ dài, kèm theo 'the'.",
+                examples: "1. The retail price is <b>higher than</b> the wholesale price. (So sánh hơn)<br>2. This workstation is <b>as productive as</b> that one. (So sánh bằng)<br>3. This is <b>the most expensive</b> machinery in the factory. (So sánh nhất)"
+            },
+            "Week2_T5": {
+                title: "Câu điều kiện loại 1 & 2 (Conditional Sentences)",
+                formula: "L1: If + S + V(s/es), S + will + V | L2: If + S + V2/ed, S + would + V",
+                desc: "Loại 1 diễn tả sự việc có thể xảy ra ở hiện tại/tương lai. Loại 2 diễn tả giả định trái ngược với thực tế ở hiện tại (chú ý If I were...)",
+                usage: "• Loại 1 (Điều kiện có thật): Dùng để đưa ra giả định thực tế ở hiện tại/tương lai.<br>• Loại 2 (Điều kiện giả định không có thật): Dùng để giả định trái ngược hoàn toàn với thực tế ở hiện tại. Động từ tobe ở mệnh đề If luôn là 'were' cho mọi ngôi.",
+                examples: "1. If we <b>invest</b> now, we <b>will profit</b> later. (Điều kiện loại 1)<br>2. If I <b>were</b> you, I <b>would upgrade</b> the database server. (Điều kiện loại 2)<br>3. If they <b>conducted</b> a survey, they <b>would get</b> feedback. (Điều kiện loại 2)"
+            },
+            "Week2_T6": {
+                title: "Danh động từ & Động từ nguyên mẫu (Gerund vs Infinitive)",
+                formula: "V + V-ing (avoid, enjoy...) | V + to-V (decide, want...)",
+                desc: "Một số động từ chỉ đi với danh động từ (Gerund - Ving), một số chỉ đi với động từ nguyên mẫu có to (To-V). Cần học thuộc lòng danh sách các từ này.",
+                usage: "• Nhóm đi với V-ing: avoid, postpone, delay, keep, practice, suggest, mind, enjoy...<br>• Nhóm đi với To-V: decide, refuse, agree, expect, plan, promise, offer, fail, want...<br>• Nhóm có thể đi với cả 2 nhưng đổi nghĩa: remember, forget, stop, try...",
+                examples: "1. We decided <b>to upgrade</b> our security software. (decide + To-V)<br>2. Please avoid <b>making</b> noise in the library. (avoid + V-ing)<br>3. They agreed <b>to sign</b> the sales contract. (agree + To-V)"
+            }
+        };
+
+        // Tasks checklist data compiled for all 8 weeks and days (T2-T7)
+        let checklistState = JSON.parse(localStorage.getItem('toeic_checklist_state')) || {};
+        let vocabIndexState = 0; // Current word index for active day card
+        let activeVocabMode = 'flashcard'; // 'flashcard' or 'quiz'
+        let activeGrammarTab = 'formula'; // 'formula', 'usage', or 'examples'
+
+        // Current UI state variables
+        let activeWeek = 1;
+        let activeDay = "T2";
+
+        // Quiz State Variables
+        let quizQuestions = [];
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let quizAnswersSelected = [];
+
+        // Shadowing Player State Variables
+        let shadowingPlaying = false;
+        let shadowingTimerInterval = null;
+        let shadowingSeconds = 0;
+        const shadowingMaxSeconds = 60; // Simulate 1 minute audio
+
+        // Mock test data table
+        let mockTestData = JSON.parse(localStorage.getItem('toeic_mock_tests')) || [
+            { id: "Baseline", title: "Mini Test 1", week: "Tuần 2", lc: "", rc: "", note: "Bài thi đánh giá năng lực cơ bản đầu tiên" },
+            { id: "Mock1", title: "Full Mock Test #1", week: "Tuần 5", lc: "", rc: "", note: "Thi thử full 200 câu sau giai đoạn học từng part" },
+            { id: "Mock2", title: "Full Mock Test #2", week: "Tuần 6", lc: "", rc: "", note: "Bắt đầu giai đoạn rèn đề tính giờ" },
+            { id: "Mock3", title: "Full Mock Test #3", week: "Tuần 7", lc: "", rc: "", note: "Đề ETS tăng cường chiến thuật loại nhiễu" },
+            { id: "Mock4", title: "Full Mock Test #4", week: "Tuần 8", lc: "", rc: "", note: "Thi mô phỏng áp lực phòng thi thật" },
+            { id: "Mock5", title: "Full Mock Test #5", week: "Tuần 8", lc: "", rc: "", note: "Bài thi thử rà soát cuối cùng trước ngày thi thật" }
+        ];
+
+        // Generate daily tasks checklist items dynamically based on Week and Day
+        function getDailyTasks(week, day) {
+            const list = [];
+            const key = `W${week}_${day}`;
+            
+            if (week === 1) {
+                if (day === "T2") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Ngữ pháp sáng (1h): Các thì cơ bản", desc: "Học lý thuyết thì Hiện tại đơn, Quá khứ đơn, Tương lai đơn. Làm 15 câu bài tập trắc nghiệm." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Từ vựng tối (45p): 20 từ chủ đề Office", desc: "Học 20 từ thông minh ở bảng bên cạnh, nghe phát âm, lật thẻ xem ví dụ và chép lại." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (15p): Shadowing Part 1", desc: "Nghe Audio 6 tranh tả người Part 1 ETS 2020 Test 1. Nói lặp lại ngay sau người bản xứ." });
+                } else if (day === "T3") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Ngữ pháp sáng (1h): Các thì Tiếp diễn & Hoàn thành", desc: "Học thì Hiện tại tiếp diễn, Quá khứ tiếp diễn và Hiện tại hoàn thành." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Từ vựng tối (45p): 20 từ chủ đề Business", desc: "Học 20 từ thông minh mới. Rà soát nhanh lại 20 từ chủ đề Office hôm qua." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (15p): Shadowing Part 1 (Tranh tả vật)", desc: "Nghe Audio 6 tranh tả vật Part 1 ETS 2020 Test 2. Thực hành shadowing nhịp điệu tiếng Anh." });
+                } else if (day === "T4") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Ngữ pháp sáng (1h): Ôn tập các thì & Làm bài tập", desc: "Hệ thống lại 6 thì đã học. Làm 30 câu trắc nghiệm tổng hợp chia thì động từ." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Từ vựng tối (45p): 20 từ chủ đề Finance", desc: "Học 20 từ tài chính. Ghi chú các từ khó vào sổ tay." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (15p): Nghe Part 1 (10 câu)", desc: "Nghe trọn vẹn 10 câu Part 1 đề thi thử, chấm điểm xem đúng bao nhiêu câu." });
+                } else if (day === "T5") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Ngữ pháp sáng (1h): Từ loại cơ bản (Danh, Tính, Động, Trạng)", desc: "Học vị trí của N, Adj, Adv, Pronoun trong câu. Đây là câu ăn điểm nhanh của Part 5!" });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Từ vựng tối (45p): 20 từ chủ đề Travel", desc: "Học 20 từ du lịch, ga tàu, sân bay. Đây là chủ đề cực kỳ phổ biến của Listening." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (15p): Shadowing Part 1 nâng cao", desc: "Chọn 3 câu mô tả tranh phức tạp, nghe đi nghe lại, chép chính tả rồi nói đuổi." });
+                } else if (day === "T6") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Ngữ pháp sáng (1h): Giới từ & Liên từ", desc: "Học cách dùng giới từ thời gian/không gian và các liên từ phổ biến (because, although, but...)." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Từ vựng tối (45p): 20 từ chủ đề Health", desc: "Học 20 từ vựng phòng khám, bác sĩ, đơn thuốc. Dùng flashcards để học." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (15p): Nghe 10 câu Part 2", desc: "Nghe 10 câu hỏi đáp Part 2. Tránh bẫy lặp âm hoặc đồng âm." });
+                } else if (day === "T7") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Tổng ôn sáng (1h): Hệ thống kiến thức tuần 1", desc: "Đọc lại toàn bộ lý thuyết ngữ pháp đã ghi chép từ Thứ 2 đến Thứ 6." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Kiểm tra từ vựng tối (45p): Ôn tập 100 từ vựng", desc: "Dùng tính năng Flashcards ôn tập toàn bộ 100 từ vựng đã học trong tuần." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (30p): Podcast tiếng Anh dễ", desc: "Nghe các mẩu chuyện ngắn hoặc podcast tiếng Anh giao tiếp đơn giản để thư giãn." });
+                }
+            } else if (week === 2) {
+                if (day === "T2") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Ngữ pháp sáng (1h): Câu bị động (Passive Voice)", desc: "Học cấu trúc Be + V3/ed cho các thì. Nhận biết câu bị động dựa vào ngữ cảnh và giới từ 'by'." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Từ vựng tối (45p): 20 từ chủ đề Marketing", desc: "Học 20 từ quảng cáo, tiếp thị, chiến dịch." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (15p): Nghe Part 2 (15 câu)", desc: "Tập trung nghe từ đầu tiên (Who, Where, When, Why, How...) để tìm câu trả lời chuẩn xác." });
+                } else if (day === "T3") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Ngữ pháp sáng (1h): Mệnh đề quan hệ (Who, Whom, Which, That)", desc: "Học cách dùng đại từ quan hệ thay thế cho chủ ngữ hoặc tân ngữ." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Từ vựng tối (45p): 20 từ chủ đề Manufacturing", desc: "Học 20 từ nhà máy, sản xuất, máy móc thiết bị." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (15p): Nghe Part 2 nâng cao", desc: "Nghe trọn vẹn 15 câu hỏi dạng gián tiếp, câu hỏi đuôi hoặc câu đề nghị khó nhằn." });
+                } else if (day === "T4") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Ngữ pháp sáng (1h): So sánh hơn, so sánh nhất, so sánh bằng", desc: "Phân biệt công thức tính từ ngắn và tính từ dài. Chú ý các trường hợp đặc biệt (good -> better -> best)." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Từ vựng tối (45p): 20 từ chủ đề Personnel", desc: "Học 20 từ nhân sự, tuyển dụng, CV, chế độ lương." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (15p): Part 3 (3 bài hội thoại)", desc: "Tập trung đọc trước 3 câu hỏi trước khi audio phát. Khoanh vùng thông tin cần tìm." });
+                } else if (day === "T5") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Ngữ pháp sáng (1h): Câu điều kiện loại 1 & loại 2", desc: "Học công thức mệnh đề If và mệnh đề chính. Lưu ý cách chia động từ giả định ở loại 2." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Từ vựng tối (45p): 20 từ chủ đề Technology", desc: "Học 20 từ công nghệ, phần mềm, cơ sở dữ liệu." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (15p): Part 3 nâng cao", desc: "Thực hành nghe và trả lời 3 bài hội thoại khó, sau đó đọc lại transcript để dò từ mới." });
+                } else if (day === "T6") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "Ngữ pháp sáng (1h): Danh động từ & Động từ nguyên mẫu (Ving vs To V)", desc: "Học thuộc lòng các động từ đi kèm Ving (avoid, keep...) và các động từ đi kèm To V (decide, expect...)." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "Từ vựng tối (45p): 20 từ chủ đề Shopping", desc: "Học 20 từ mua sắm, siêu thị, bảo hành, hóa đơn." });
+                    list.push({ id: `${key}_t3`, badge: "listen", name: "Luyện nghe tối (15p): Part 4 (3 bài nói ngắn)", desc: "Luyện tập nghe bài phát biểu, quảng cáo hoặc hướng dẫn của 1 người nói." });
+                } else if (day === "T7") {
+                    list.push({ id: `${key}_t1`, badge: "grammar", name: "MINI TEST SÁNG (2h): 50 câu LC + 50 câu RC", desc: "Thi thử rút gọn nửa đề thi thật (ETS 2020 Test 1) để đánh giá năng lực nền tảng ban đầu." });
+                    list.push({ id: `${key}_t2`, badge: "vocab", name: "TỐI SỬA ĐỀ (1h): Phân tích chi tiết lỗi sai", desc: "Chấm điểm, ghi nhận điểm số vào bảng theo dõi. Xem kỹ tại sao mình chọn sai và ghi chép sổ tay." });
+                }
+            } else {
+                // Generates standardized structural task items for advanced weeks 3 to 8
+                const phaseName = week <= 5 ? "GĐ 2: Luyện Part" : (week <= 7 ? "GĐ 3: Luyện Đề" : "GĐ 4: Vượt Ngưỡng");
+                
+                list.push({ id: `${key}_t1`, badge: "grammar", name: `Sáng (1h): Học chiến thuật & Ôn điểm NP yếu`, desc: `Rà soát kiến thức, ghi chép chiến thuật của Part trọng tâm tuần. Thực hành 30 câu trắc nghiệm chuyên đề.` });
+                list.push({ id: `${key}_t2`, badge: "vocab", name: `Chiều (45p): Ôn luyện 20 từ vựng nâng cao`, desc: `Ôn tập từ vựng qua các bài đọc hiểu hoặc flashcards. Tích lũy các từ đồng nghĩa hay gặp trong đề.` });
+                
+                if (day === "T7") {
+                    list.push({ id: `${key}_t3`, badge: "listen", name: `Tối (2h): THI THỬ MOCK TEST & Ghi điểm`, desc: `Làm bài thi thử 2 tiếng nghiêm túc. Lưu điểm số vào bảng theo dõi để kiểm chứng tiến trình học!` });
+                } else {
+                    list.push({ id: `${key}_t3`, badge: "listen", name: `Tối (1.5h): Luyện chuyên sâu đề ETS`, desc: `Luyện tập nghe/đọc các part tương ứng theo tài liệu ETS 2022. Đọc kỹ phần giải thích chi tiết đáp án.` });
+                }
+            }
+
+            return list;
+        }
+
+        // Initialize Web Application Elements
+        function initApp() {
+            renderWeeksSidebar();
+            renderDayTabs();
+            loadActiveDayDashboard();
+            renderScoreTracker();
+            updateOverallProgress();
+            
+            // Set canvas dynamic resize
+            window.addEventListener('resize', () => {
+                const canvas = document.getElementById("confettiCanvas");
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Render Weeks Sidebar List
+        function renderWeeksSidebar() {
+            const weekList = document.getElementById("weekList");
+            weekList.innerHTML = "";
+
+            weeksData.forEach(week => {
+                const li = document.createElement("li");
+                li.className = `week-item ${week.id === activeWeek ? 'active' : ''}`;
+                li.onclick = () => {
+                    activeWeek = week.id;
+                    document.querySelectorAll(".week-item").forEach(el => el.classList.remove("active"));
+                    li.classList.add("active");
+                    
+                    document.getElementById("currentWeekTitle").innerText = week.title;
+                    document.getElementById("currentWeekDesc").innerText = week.desc;
+                    
+                    renderDayTabs();
+                    loadActiveDayDashboard();
+                };
+
+                // Calculate progress of this specific week
+                let completed = 0;
+                let total = 0;
+                week.days.forEach(d => {
+                    const tasks = getDailyTasks(week.id, d);
+                    total += tasks.length;
+                    tasks.forEach(t => {
+                        if (checklistState[t.id]) completed++;
+                    });
+                });
+                
+                const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+                li.innerHTML = `
+                    <span>${week.title.split(":")[0]}</span>
+                    <div class="week-progress-circle">${percent}%</div>
+                `;
+                weekList.appendChild(li);
+            });
+        }
+
+        // Render Day Tabs for currently selected Week
+        function renderDayTabs() {
+            const dayTabs = document.getElementById("dayTabs");
+            dayTabs.innerHTML = "";
+
+            const activeWeekData = weeksData.find(w => w.id === activeWeek);
+            
+            activeWeekData.days.forEach(day => {
+                const btn = document.createElement("button");
+                btn.className = `day-tab ${day === activeDay ? 'active' : ''}`;
+                btn.innerText = day;
+                btn.onclick = () => {
+                    activeDay = day;
+                    document.querySelectorAll(".day-tab").forEach(el => el.classList.remove("active"));
+                    btn.classList.add("active");
+                    loadActiveDayDashboard();
+                };
+                dayTabs.appendChild(btn);
+            });
+        }
+
+        // Load tasks, vocab and grammar content for active week and day
+        function loadActiveDayDashboard() {
+            // Reset state
+            stopShadowingPlayer();
+
+            // 1. Render checklist
+            const dailyTaskList = document.getElementById("dailyTaskList");
+            dailyTaskList.innerHTML = "";
+            
+            const tasks = getDailyTasks(activeWeek, activeDay);
+            
+            tasks.forEach(task => {
+                const item = document.createElement("div");
+                const isCompleted = !!checklistState[task.id];
+                item.className = `task-item ${isCompleted ? 'completed' : ''}`;
+                item.onclick = () => toggleTaskCompleted(task.id, item);
+                
+                item.innerHTML = `
+                    <div class="task-checkbox">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="task-body">
+                        <span class="task-badge badge-${task.badge}">${task.badge === 'vocab' ? 'từ vựng' : (task.badge === 'grammar' ? 'ngữ pháp' : 'nghe')}</span>
+                        <div class="task-name">${task.name}</div>
+                        <div class="task-desc">${task.desc}</div>
+                    </div>
+                `;
+                dailyTaskList.appendChild(item);
+            });
+
+            // 2. Render Vocabulary Card
+            const vocabKey = `Week${activeWeek}_${activeDay}`;
+            const vocabPanel = document.getElementById("vocabPanel");
+            
+            if (vocabDatabase[vocabKey]) {
+                vocabPanel.style.display = "flex";
+                vocabIndexState = 0;
+                
+                // Redraw word list grid
+                renderWordGrid(vocabKey);
+                
+                if (activeVocabMode === 'quiz') {
+                    startQuiz(vocabKey);
+                } else {
+                    updateVocabCardUI(vocabKey);
+                }
+            } else {
+                vocabPanel.style.display = "none";
+            }
+
+            // 3. Render Grammar Card
+            const grammarKey = `Week${activeWeek}_${activeDay}`;
+            const grammarPanel = document.getElementById("grammarPanel");
+            
+            if (grammarDatabase[grammarKey]) {
+                grammarPanel.style.display = "flex";
+                document.getElementById("grammarTitle").innerText = grammarDatabase[grammarKey].title;
+                switchGrammarTab(activeGrammarTab);
+            } else {
+                grammarPanel.style.display = "none";
+            }
+
+            // 4. Render shadowing audio control
+            const shadowingCard = document.getElementById("shadowingCard");
+            const hasListening = tasks.some(t => t.badge === 'listen');
+            if (hasListening) {
+                shadowingCard.style.display = "flex";
+                
+                // Get shadowing script
+                const shadowingKey = `Week${activeWeek}_${activeDay}`;
+                let scriptObj = shadowingDatabase[shadowingKey];
+                if (!scriptObj) {
+                    // Fallback to default index-based scripts
+                    const idx = (activeWeek + activeDay.charCodeAt(0)) % defaultShadowingScripts.length;
+                    scriptObj = defaultShadowingScripts[idx];
+                }
+                
+                document.getElementById("shadowingScriptTitle").innerText = scriptObj.title;
+                document.getElementById("shadowingScriptBox").innerHTML = prepareScriptHTML(scriptObj.text);
+                
+                // Reset progress bar & timer UI
+                document.getElementById("playerProgressBar").style.width = "0%";
+                document.getElementById("playerTimer").innerText = "0:00";
+            } else {
+                shadowingCard.style.display = "none";
+            }
+
+            // 5. Update general tip text
+            const tipsText = document.getElementById("tipsText");
+            if (activeWeek <= 2) {
+                tipsText.innerText = "Dành tối thiểu 2 giờ để tập trung học từ mới và ghi chú công thức ngữ pháp. Luôn ghi nhận phát âm to từ vựng để tạo liên kết âm thanh.";
+            } else if (activeWeek <= 5) {
+                tipsText.innerText = "Giai đoạn học part chuyên sâu: Hãy làm quen với format đề thi. Khi làm bài, hãy bắt buộc khoanh tròn các từ khóa của câu hỏi trước khi nghe.";
+            } else {
+                tipsText.innerText = "Giai đoạn chạy đề thật: Nhất quyết phải đặt đồng hồ đếm ngược 75 phút khi làm bài Reading, không được tra từ điển trong lúc làm bài.";
+            }
+        }
+
+        // Toggle task checklist completion status
+        function toggleTaskCompleted(taskId, element) {
+            checklistState[taskId] = !checklistState[taskId];
+            localStorage.setItem('toeic_checklist_state', JSON.stringify(checklistState));
+            
+            if (checklistState[taskId]) {
+                element.classList.add("completed");
+                
+                // Check if all daily tasks are completed, trigger confetti!
+                const dailyTasks = getDailyTasks(activeWeek, activeDay);
+                const allDone = dailyTasks.every(t => !!checklistState[t.id]);
+                if (allDone) {
+                    triggerConfetti();
+                }
+            } else {
+                element.classList.remove("completed");
+            }
+            
+            // Recompute stats
+            updateOverallProgress();
+            renderWeeksSidebar();
+            
+            // Auto streak increase if tasks are done
+            updateStreakDays();
+        }
+
+        // Update Vocab Card layout
+        function updateVocabCardUI(vocabKey) {
+            const db = vocabDatabase[vocabKey];
+            const word = db.words[vocabIndexState];
+            
+            // Reset flip state
+            document.getElementById("vocabCard").classList.remove("flipped");
+            
+            document.getElementById("vocabThemeName").innerText = db.theme;
+            document.getElementById("currentWordIndex").innerText = vocabIndexState + 1;
+            
+            document.getElementById("wordPos").innerText = word.pos;
+            document.getElementById("wordName").innerText = word.word;
+            document.getElementById("wordPron").innerText = word.pron;
+            
+            document.getElementById("wordMean").innerText = word.mean;
+            document.getElementById("wordExample").innerText = `"${word.example}"`;
+            
+            // Update active state in grid chips
+            document.querySelectorAll(".word-chip").forEach((chip, idx) => {
+                if (idx === vocabIndexState) {
+                    chip.classList.add("active");
+                } else {
+                    chip.classList.remove("active");
+                }
+            });
+        }
+
+        // Render Vocabulary quick selector grid below flashcard
+        function renderWordGrid(vocabKey) {
+            const grid = document.getElementById("wordGrid");
+            grid.innerHTML = "";
+            
+            const db = vocabDatabase[vocabKey];
+            const mastered = JSON.parse(localStorage.getItem('toeic_mastered_words')) || {};
+            
+            db.words.forEach((word, idx) => {
+                const chip = document.createElement("div");
+                const isMastered = !!mastered[word.word];
+                chip.className = `word-chip ${idx === vocabIndexState ? 'active' : ''} ${isMastered ? 'mastered' : ''}`;
+                chip.innerText = idx + 1;
+                chip.onclick = (e) => {
+                    e.stopPropagation();
+                    vocabIndexState = idx;
+                    switchVocabMode('flashcard');
+                    updateVocabCardUI(vocabKey);
+                };
+                grid.appendChild(chip);
+            });
+        }
+
+        function nextVocabWord() {
+            const vocabKey = `Week${activeWeek}_${activeDay}`;
+            if (vocabDatabase[vocabKey]) {
+                vocabIndexState = (vocabIndexState + 1) % vocabDatabase[vocabKey].words.length;
+                updateVocabCardUI(vocabKey);
+            }
+        }
+
+        function prevVocabWord() {
+            const vocabKey = `Week${activeWeek}_${activeDay}`;
+            if (vocabDatabase[vocabKey]) {
+                vocabIndexState = (vocabIndexState - 1 + vocabDatabase[vocabKey].words.length) % vocabDatabase[vocabKey].words.length;
+                updateVocabCardUI(vocabKey);
+            }
+        }
+
+        function markWordMastered() {
+            let mastered = JSON.parse(localStorage.getItem('toeic_mastered_words')) || {};
+            const vocabKey = `Week${activeWeek}_${activeDay}`;
+            const word = vocabDatabase[vocabKey].words[vocabIndexState];
+            
+            mastered[word.word] = true;
+            localStorage.setItem('toeic_mastered_words', JSON.stringify(mastered));
+            
+            document.getElementById("vocabMasteredCount").innerText = Object.keys(mastered).length;
+            
+            // Re-render word grid to show the green tick
+            renderWordGrid(vocabKey);
+            
+            // Animate effect
+            const btn = document.querySelector(".btn-primary");
+            btn.innerText = "Đã thuộc ✔";
+            btn.style.background = "#34d399";
+            setTimeout(() => {
+                btn.innerText = "Đã thuộc ✔";
+                btn.style.background = "var(--primary)";
+                nextVocabWord();
+            }, 300);
+        }
+
+        // Speech Synthesis for Vocabulary
+        function handleSpeakClick(event) {
+            event.stopPropagation(); // prevent card flip
+            const vocabKey = `Week${activeWeek}_${activeDay}`;
+            const word = vocabDatabase[vocabKey].words[vocabIndexState];
+            
+            const synth = window.speechSynthesis;
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            const utter = new SpeechSynthesisUtterance(word.word);
+            utter.lang = 'en-US';
+            utter.rate = 0.85;
+            synth.speak(utter);
+        }
+
+        function handleCardClick(event, cardEl) {
+            // Flip the card unless they clicked the speaker button
+            if (!event.target.closest('.speaker-btn')) {
+                cardEl.classList.toggle('flipped');
+            }
+        }
+
+        // Switch panel modes: Flashcard or Quiz
+        window.switchVocabMode = function(mode) {
+            activeVocabMode = mode;
+            document.getElementById("tabFlashcard").className = `panel-tab ${mode === 'flashcard' ? 'active' : ''}`;
+            document.getElementById("tabQuiz").className = `panel-tab ${mode === 'quiz' ? 'active' : ''}`;
+            
+            const vocabKey = `Week${activeWeek}_${activeDay}`;
+            
+            if (mode === 'flashcard') {
+                document.getElementById("vocabFlashcardView").style.display = "block";
+                document.getElementById("vocabQuizView").style.display = "none";
+                updateVocabCardUI(vocabKey);
+            } else {
+                document.getElementById("vocabFlashcardView").style.display = "none";
+                document.getElementById("vocabQuizView").style.display = "block";
+                startQuiz(vocabKey);
+            }
+        }
+
+        // Quiz Logic Engine
+        function startQuiz(vocabKey) {
+            const db = vocabDatabase[vocabKey];
+            if (!db) return;
+            
+            // Generate 5 random questions
+            const shuffledWords = [...db.words].sort(() => 0.5 - Math.random());
+            quizQuestions = shuffledWords.slice(0, 5).map(item => {
+                // Select 3 random incorrect answers from this day's vocabulary
+                const incorrects = db.words
+                    .filter(w => w.word !== item.word)
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 3)
+                    .map(w => w.mean);
+                
+                const choices = [...incorrects, item.mean].sort(() => 0.5 - Math.random());
+                
+                return {
+                    word: item.word,
+                    pron: item.pron,
+                    correct: item.mean,
+                    choices: choices
+                };
+            });
+            
+            currentQuizIndex = 0;
+            quizScore = 0;
+            quizAnswersSelected = [];
+            
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const panel = document.getElementById("quizPanel");
+            panel.innerHTML = "";
+            
+            if (currentQuizIndex >= quizQuestions.length) {
+                // Show quiz results
+                panel.innerHTML = `
+                    <div style="text-align: center; display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+                        <span style="font-size: 3rem;">🏆</span>
+                        <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: white;">Hoàn thành bài luyện tập!</h4>
+                        <p style="font-size: 1.1rem;">Bạn trả lời chính xác: <strong style="color: var(--primary); font-size: 1.3rem;">${quizScore}/${quizQuestions.length}</strong> câu hỏi.</p>
+                        <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; width: 100%;">
+                            <button class="btn btn-primary" style="flex-grow: 1;" onclick="restartQuiz()">Luyện lại</button>
+                            <button class="btn" style="flex-grow: 1;" onclick="switchVocabMode('flashcard')">Trở lại Flashcard</button>
+                        </div>
+                    </div>
+                `;
+                
+                if (quizScore === quizQuestions.length) {
+                    triggerConfetti();
+                }
+                return;
+            }
+            
+            const q = quizQuestions[currentQuizIndex];
+            
+            const questionHeader = document.createElement("div");
+            questionHeader.className = "quiz-header";
+            questionHeader.innerText = `Câu hỏi ${currentQuizIndex + 1} trên ${quizQuestions.length}`;
+            panel.appendChild(questionHeader);
+            
+            const questionTitle = document.createElement("div");
+            questionTitle.className = "quiz-question";
+            questionTitle.innerHTML = `Nghĩa của từ: <strong style="color: var(--secondary); font-size: 1.35rem;">${q.word}</strong> <span style="font-size: 0.9rem; font-weight: normal; color: var(--text-muted); font-style: italic;">${q.pron}</span> là gì?`;
+            panel.appendChild(questionTitle);
+            
+            const choicesBox = document.createElement("div");
+            choicesBox.className = "quiz-choices";
+            
+            q.choices.forEach(choice => {
+                const choiceBtn = document.createElement("button");
+                choiceBtn.className = "quiz-choice";
+                choiceBtn.innerText = choice;
+                choiceBtn.onclick = () => handleQuizAnswer(choice, choiceBtn);
+                choicesBox.appendChild(choiceBtn);
+            });
+            panel.appendChild(choicesBox);
+        }
+
+        function handleQuizAnswer(selectedOption, buttonEl) {
+            const q = quizQuestions[currentQuizIndex];
+            const choicesButtons = document.querySelectorAll(".quiz-choice");
+            
+            // Disable all buttons to avoid multiple clicks
+            choicesButtons.forEach(btn => btn.disabled = true);
+            
+            if (selectedOption === q.correct) {
+                buttonEl.classList.add("correct");
+                quizScore++;
+            } else {
+                buttonEl.classList.add("incorrect");
+                // Highlight the correct answer too
+                choicesButtons.forEach(btn => {
+                    if (btn.innerText === q.correct) {
+                        btn.classList.add("correct");
+                    }
+                });
+            }
+            
+            // Advance to next question after 1.5 seconds
+            setTimeout(() => {
+                currentQuizIndex++;
+                renderQuizQuestion();
+            }, 1500);
+        }
+
+        window.restartQuiz = function() {
+            const vocabKey = `Week${activeWeek}_${activeDay}`;
+            startQuiz(vocabKey);
+        }
+
+        // Switch Grammar card tabs: Formula, Usage, Examples
+        window.switchGrammarTab = function(tabName) {
+            activeGrammarTab = tabName;
+            document.getElementById("gramTabFormula").className = `panel-tab ${tabName === 'formula' ? 'active' : ''}`;
+            document.getElementById("gramTabUsage").className = `panel-tab ${tabName === 'usage' ? 'active' : ''}`;
+            document.getElementById("gramTabExamples").className = `panel-tab ${tabName === 'examples' ? 'active' : ''}`;
+            
+            const grammarKey = `Week${activeWeek}_${activeDay}`;
+            const data = grammarDatabase[grammarKey];
+            const contentBox = document.getElementById("grammarTabContent");
+            
+            if (!data) return;
+            
+            contentBox.innerHTML = "";
+            if (tabName === 'formula') {
+                contentBox.innerHTML = `
+                    <div class="grammar-formula">${data.formula}</div>
+                    <p class="grammar-item-desc">${data.desc}</p>
+                `;
+            } else if (tabName === 'usage') {
+                contentBox.innerHTML = `
+                    <p class="grammar-item-desc" style="line-height: 1.8;">${data.usage}</p>
+                `;
+            } else {
+                // Examples
+                contentBox.innerHTML = `
+                    <div class="grammar-item-desc" style="display: flex; flex-direction: column; gap: 0.65rem;">
+                        ${data.examples.split("<br>").map(item => `<div class="grammar-example-item">${item}</div>`).join("")}
+                    </div>
+                `;
+            }
+        }
+
+        // Safety word tokenizer helper
+        function prepareScriptHTML(text) {
+            const regex = /\S+/g;
+            let match;
+            let html = "";
+            let idx = 0;
+            while ((match = regex.exec(text)) !== null) {
+                const start = match.index;
+                const end = regex.lastIndex;
+                const w = match[0];
+                html += `<span class="shadow-word" id="word_${idx}" data-start="${start}" data-end="${end}">${w}</span> `;
+                idx++;
+            }
+            return html;
+        }
+
+        // Shadowing Voice Playback Logic using Text-to-Speech
+        let currentUtterance = null;
+        let shadowingStartTime = 0;
+
+        window.toggleShadowingPlayer = function() {
+            if (shadowingPlaying) {
+                stopShadowingPlayer();
+            } else {
+                startShadowingPlayer();
+            }
+        }
+
+        function startShadowingPlayer() {
+            const scriptBox = document.getElementById("shadowingScriptBox");
+            const scriptText = scriptBox.textContent.trim();
+            if (!scriptText) return;
+            
+            const synth = window.speechSynthesis;
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            
+            shadowingPlaying = true;
+            document.getElementById("audioWaves").classList.add("playing");
+            document.getElementById("playBtn").classList.remove("btn-primary");
+            document.getElementById("playIcon").innerHTML = "⏸ Pause Audio";
+            
+            // Clear highlights
+            document.querySelectorAll(".shadow-word").forEach(span => span.classList.remove("highlighted"));
+            
+            // Create utterance
+            currentUtterance = new SpeechSynthesisUtterance(scriptText);
+            currentUtterance.lang = 'en-US';
+            currentUtterance.rate = 0.80; // slightly slower for speech shadowing
+            
+            shadowingSeconds = 0;
+            shadowingStartTime = Date.now();
+            
+            // Timer interval
+            shadowingTimerInterval = setInterval(() => {
+                shadowingSeconds = Math.floor((Date.now() - shadowingStartTime) / 1000);
+                const min = Math.floor(shadowingSeconds / 60);
+                const sec = shadowingSeconds % 60;
+                document.getElementById("playerTimer").innerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+            }, 1000);
+            
+            // Map text boundary and highlight spoken words
+            currentUtterance.onboundary = function(event) {
+                if (event.name === 'word') {
+                    const charIndex = event.charIndex;
+                    const pct = (charIndex / scriptText.length) * 100;
+                    document.getElementById("playerProgressBar").style.width = `${pct}%`;
+                    
+                    const spans = document.querySelectorAll(".shadow-word");
+                    spans.forEach(span => {
+                        const start = parseInt(span.getAttribute("data-start"));
+                        const end = parseInt(span.getAttribute("data-end"));
+                        if (charIndex >= start && charIndex < end) {
+                            span.classList.add("highlighted");
+                            span.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        } else {
+                            span.classList.remove("highlighted");
+                        }
+                    });
+                }
+            };
+            
+            currentUtterance.onend = function() {
+                document.getElementById("playerProgressBar").style.width = "100%";
+                setTimeout(() => {
+                    stopShadowingPlayer();
+                    document.getElementById("playerProgressBar").style.width = "0%";
+                    document.getElementById("playerTimer").innerText = "0:00";
+                }, 800);
+            };
+            
+            currentUtterance.onerror = function() {
+                stopShadowingPlayer();
+            };
+            
+            synth.speak(currentUtterance);
+        }
+
+        function stopShadowingPlayer() {
+            const synth = window.speechSynthesis;
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            
+            shadowingPlaying = false;
+            const wave = document.getElementById("audioWaves");
+            const playBtn = document.getElementById("playBtn");
+            const playIcon = document.getElementById("playIcon");
+            
+            if (wave) wave.classList.remove("playing");
+            if (playBtn) playBtn.classList.add("btn-primary");
+            if (playIcon) playIcon.innerHTML = "▶ Play Audio";
+            
+            if (shadowingTimerInterval) {
+                clearInterval(shadowingTimerInterval);
+                shadowingTimerInterval = null;
+            }
+            
+            // Clear highlights
+            document.querySelectorAll(".shadow-word").forEach(span => span.classList.remove("highlighted"));
+        }
+
+        window.handleProgressClick = function(event) {
+            // Cannot seek speech synthesis utterance directly via progress click easily
+            // So we disable or ignore seeking click for TTS to maintain system stability
+        }
+
+        // Confetti Fireworks celebration canvas drawing
+        function triggerConfetti() {
+            const canvas = document.getElementById("confettiCanvas");
+            const ctx = canvas.getContext("2d");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            let pieces = [];
+            const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#ec4899'];
+            
+            for (let i = 0; i < 120; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height - 20,
+                    size: Math.random() * 8 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 4 + 2,
+                    angle: Math.random() * 360,
+                    rotationSpeed: Math.random() * 4 - 2
+                });
+            }
+            
+            let active = true;
+            function draw() {
+                if (!active) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let finished = true;
+                pieces.forEach(p => {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.angle * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    ctx.restore();
+                    
+                    p.y += p.speed;
+                    p.angle += p.rotationSpeed;
+                    p.x += Math.sin(p.y / 20) * 0.4;
+                    
+                    if (p.y < canvas.height) {
+                        finished = false;
+                    }
+                });
+                
+                if (finished) {
+                    active = false;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                } else {
+                    requestAnimationFrame(draw);
+                }
+            }
+            draw();
+            // Automatically clear animation loop after 4 seconds
+            setTimeout(() => { active = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }, 4000);
+        }
+
+        // Calculate and display overall roadmap progress
+        function updateOverallProgress() {
+            let total = 0;
+            let completed = 0;
+            
+            for (let w = 1; w <= 8; w++) {
+                const days = ["T2", "T3", "T4", "T5", "T6", "T7"];
+                days.forEach(d => {
+                    const tasks = getDailyTasks(w, d);
+                    total += tasks.length;
+                    tasks.forEach(t => {
+                        if (checklistState[t.id]) completed++;
+                    });
+                });
+            }
+
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            document.getElementById("overallPercent").innerText = `${percent}%`;
+            document.getElementById("overallProgressBar").style.width = `${percent}%`;
+            document.getElementById("completedTasksCount").innerText = completed;
+            document.getElementById("totalTasksCount").innerText = total;
+
+            // Load counts
+            const mastered = JSON.parse(localStorage.getItem('toeic_mastered_words')) || {};
+            document.getElementById("vocabMasteredCount").innerText = Object.keys(mastered).length;
+            
+            const streak = localStorage.getItem('toeic_streak_days') || 0;
+            document.getElementById("streakDays").innerText = streak;
+        }
+
+        // Streak Days calculation logic
+        function updateStreakDays() {
+            let streak = parseInt(localStorage.getItem('toeic_streak_days') || "0");
+            const lastActive = localStorage.getItem('toeic_last_active_date');
+            const today = new Date().toDateString();
+            
+            if (lastActive !== today) {
+                if (lastActive) {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    if (new Date(lastActive).toDateString() === yesterday.toDateString()) {
+                        streak += 1;
+                    } else {
+                        streak = 1;
+                    }
+                } else {
+                    streak = 1;
+                }
+                localStorage.setItem('toeic_streak_days', streak);
+                localStorage.setItem('toeic_last_active_date', today);
+                document.getElementById("streakDays").innerText = streak;
+            }
+        }
+
+        // Render SVG Line Chart for Mock Test Tracker
+        function drawScoreChart() {
+            const chartContent = document.getElementById("chartContent");
+            const chartPlaceholder = document.getElementById("chartPlaceholder");
+            chartContent.innerHTML = "";
+            
+            // Filter tests that have scores
+            const activeTests = [];
+            mockTestData.forEach((test, idx) => {
+                if (test.lc !== "" && test.rc !== "") {
+                    const score = parseInt(test.lc) + parseInt(test.rc);
+                    activeTests.push({ index: idx, score: score, title: test.title });
+                }
+            });
+            
+            if (activeTests.length === 0) {
+                chartPlaceholder.style.display = "flex";
+                return;
+            }
+            chartPlaceholder.style.display = "none";
+            
+            // Viewport dimensions in SVG coordinates: 600 width, 200 height
+            // We give 50px margins left/right, and map indices 0-5 to xCoords:
+            const xCoords = [60, 160, 260, 360, 460, 560];
+            const getScoreY = (score) => {
+                // Map score 0-990 to y 170 to 30
+                const minVal = 0;
+                const maxVal = 990;
+                const minY = 170;
+                const maxY = 30;
+                return minY - ((score - minVal) / (maxVal - minVal)) * (minY - maxY);
+            };
+            
+            // Build points
+            const points = activeTests.map(t => ({
+                x: xCoords[t.index],
+                y: getScoreY(t.score),
+                val: t.score,
+                title: t.title
+            }));
+            
+            // 1. Draw SVG Gradient Area under the path
+            if (points.length >= 2) {
+                let areaD = `M ${points[0].x} 170`;
+                points.forEach(p => {
+                    areaD += ` L ${p.x} ${p.y}`;
+                });
+                areaD += ` L ${points[points.length-1].x} 170 Z`;
+                
+                const areaPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                areaPath.setAttribute("d", areaD);
+                areaPath.setAttribute("fill", "url(#chartGrad)");
+                chartContent.appendChild(areaPath);
+            }
+            
+            // 2. Draw connecting lines
+            if (points.length >= 2) {
+                let lineD = `M ${points[0].x} ${points[0].y}`;
+                for (let i = 1; i < points.length; i++) {
+                    lineD += ` L ${points[i].x} ${points[i].y}`;
+                }
+                
+                const linePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                linePath.setAttribute("d", lineD);
+                linePath.setAttribute("fill", "none");
+                linePath.setAttribute("stroke", "url(#lineGrad)");
+                linePath.setAttribute("stroke-width", "3");
+                linePath.setAttribute("stroke-linecap", "round");
+                linePath.setAttribute("stroke-linejoin", "round");
+                chartContent.appendChild(linePath);
+            }
+            
+            // 3. Draw dots & texts
+            points.forEach(p => {
+                // Glow circles
+                const glowCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                glowCircle.setAttribute("cx", p.x);
+                glowCircle.setAttribute("cy", p.y);
+                glowCircle.setAttribute("r", "8");
+                glowCircle.setAttribute("fill", "var(--secondary)");
+                glowCircle.setAttribute("opacity", "0.25");
+                chartContent.appendChild(glowCircle);
+                
+                // Actual dot
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", p.x);
+                circle.setAttribute("cy", p.y);
+                circle.setAttribute("r", "4");
+                circle.setAttribute("fill", "#ffffff");
+                circle.setAttribute("stroke", "var(--secondary)");
+                circle.setAttribute("stroke-width", "2");
+                chartContent.appendChild(circle);
+                
+                // Score text
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", p.x);
+                text.setAttribute("y", p.y - 12);
+                text.setAttribute("fill", "#ffffff");
+                text.setAttribute("font-size", "10");
+                text.setAttribute("font-weight", "bold");
+                text.setAttribute("text-anchor", "middle");
+                text.textContent = p.val;
+                chartContent.appendChild(text);
+                
+                // Test label on X-axis
+                const labelText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                labelText.setAttribute("x", p.x);
+                labelText.setAttribute("y", "185");
+                labelText.setAttribute("fill", "var(--text-muted)");
+                labelText.setAttribute("font-size", "8");
+                labelText.setAttribute("text-anchor", "middle");
+                labelText.textContent = p.title;
+                chartContent.appendChild(labelText);
+            });
+        }
+
+        // Render Mock Test Tracker Table
+        function renderScoreTracker() {
+            const tableBody = document.getElementById("scoreTableBody");
+            tableBody.innerHTML = "";
+
+            mockTestData.forEach((test, idx) => {
+                const tr = document.createElement("tr");
+                const total = (test.lc !== "" && test.rc !== "") ? (parseInt(test.lc) + parseInt(test.rc)) : "-";
+                
+                let evalText = "Chưa làm bài";
+                let evalStyle = "color: var(--text-muted);";
+                if (total !== "-") {
+                    if (total >= 600) {
+                        evalText = "🎯 Đạt mục tiêu (Vượt 600)";
+                        evalStyle = "color: var(--success); font-weight: bold;";
+                    } else if (total >= 500) {
+                        evalText = "💪 Khá tốt (Cận mốc 600)";
+                        evalStyle = "color: var(--warning); font-weight: bold;";
+                    } else {
+                        evalText = "📚 Cần nỗ lực ôn tập thêm";
+                        evalStyle = "color: #ef4444;";
+                    }
+                }
+
+                tr.innerHTML = `
+                    <td style="font-weight: 600; color: white;">${test.title}</td>
+                    <td>${test.week}</td>
+                    <td>
+                        <input type="number" class="score-input" min="0" max="495" placeholder="0-495" 
+                               value="${test.lc}" onchange="updateScore('${test.id}', 'lc', this.value)">
+                    </td>
+                    <td>
+                        <input type="number" class="score-input" min="0" max="495" placeholder="0-495" 
+                               value="${test.rc}" onchange="updateScore('${test.id}', 'rc', this.value)">
+                    </td>
+                    <td class="score-total">${total}</td>
+                    <td style="${evalStyle}">${evalText}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            
+            // Draw chart of scores
+            drawScoreChart();
+        }
+
+        // Update score inputs
+        window.updateScore = function(testId, type, val) {
+            const test = mockTestData.find(t => t.id === testId);
+            if (test) {
+                const num = val === "" ? "" : Math.min(495, Math.max(0, parseInt(val)));
+                test[type] = num;
+                localStorage.setItem('toeic_mock_tests', JSON.stringify(mockTestData));
+                renderScoreTracker();
+            }
+        }
+
+        // Initialize application on page load
+        window.onload = initApp;
+    </script>
+</body>
+</html>

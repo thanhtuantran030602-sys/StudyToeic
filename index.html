@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOEIC Planner cho Mỹ Lệ</title>
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./assets/styles.css">
 </head>
@@ -150,6 +151,27 @@
                             <button id="tabQuiz" class="panel-tab" onclick="switchVocabMode('quiz')">Luyện tập</button>
                         </div>
                     </h3>
+
+                    <div class="vocab-library-switch">
+                        <button id="sourceDailyVocab" class="library-tab active" onclick="switchVocabSource('daily')">
+                            <span>📘</span>
+                            <strong>Từ theo lộ trình</strong>
+                        </button>
+                        <button id="sourceImageVocab" class="library-tab" onclick="switchVocabSource('image')">
+                            <span>🖼️</span>
+                            <strong>Từ vựng từ ảnh</strong>
+                        </button>
+                    </div>
+
+                    <div id="imageVocabToolbar" class="image-vocab-toolbar">
+                        <span>Chọn trang ảnh</span>
+                        <select id="imageVocabSetSelect" class="image-vocab-select" onchange="switchImageVocabSet(this.value)" aria-label="Chọn bộ từ vựng từ ảnh">
+                            <option value="Image37">Trang 37</option>
+                            <option value="Image38">Trang 38</option>
+                            <option value="Image39">Trang 39</option>
+                            <option value="Image40">Trang 40</option>
+                        </select>
+                    </div>
                     
                     <!-- Flashcard Mode View -->
                     <div id="vocabFlashcardView">
@@ -168,7 +190,12 @@
                                 </div>
                                 <div class="card-face card-back">
                                     <div class="word-mean" id="wordMean">đồng nghiệp</div>
-                                    <div class="word-example" id="wordExample">"My colleague helped me with the report."</div>
+                                    <div class="word-example-row">
+                                        <div class="word-example" id="wordExample">"My colleague helped me with the report."</div>
+                                        <button class="speaker-btn example-speaker-btn" type="button" title="Nghe câu ví dụ" onclick="handleExampleSpeakClick(event)">
+                                            🔊
+                                        </button>
+                                    </div>
                                     <div class="card-tip text-primary">✨ Hãy lặp lại phát âm to lên!</div>
                                 </div>
                             </div>
@@ -180,7 +207,8 @@
                             <button class="btn" onclick="nextVocabWord()">Sau ▶</button>
                         </div>
                         <p class="subtle-center-note">
-                            Từ <span id="currentWordIndex">1</span>/20 của ngày (Chủ đề: <span id="vocabThemeName">Office</span>)
+                            Từ <span id="currentWordIndex">1</span>/<span id="totalWordCount">20</span>
+                            (<span id="vocabScopeLabel">Chủ đề</span>: <span id="vocabThemeName">Office</span>)
                         </p>
 
                         <!-- Dynamic Word Grid Selectors -->

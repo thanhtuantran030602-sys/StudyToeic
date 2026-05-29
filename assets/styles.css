@@ -458,6 +458,95 @@
             color: white;
         }
 
+        .vocab-library-switch {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.65rem;
+        }
+
+        .library-tab {
+            min-height: 52px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.025);
+            color: var(--text-muted);
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            padding: 0.7rem 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .library-tab:hover,
+        .image-vocab-select:hover {
+            border-color: rgba(var(--primary-rgb), 0.36);
+            color: var(--text-main);
+        }
+
+        .library-tab.active {
+            background: rgba(var(--primary-rgb), 0.14);
+            border-color: rgba(var(--primary-rgb), 0.38);
+            color: var(--text-main);
+        }
+
+        .library-tab span {
+            font-size: 1rem;
+        }
+
+        .image-vocab-toolbar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.72rem 0.85rem;
+            border: 1px solid rgba(var(--primary-rgb), 0.18);
+            border-radius: 8px;
+            background: rgba(var(--primary-rgb), 0.06);
+        }
+
+        .image-vocab-toolbar.is-visible {
+            display: flex;
+        }
+
+        .image-vocab-toolbar span {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .image-vocab-select {
+            min-height: 38px;
+            min-width: 150px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background: var(--surface-1);
+            color: var(--text-main);
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0 0.65rem;
+            outline: none;
+            color-scheme: dark;
+        }
+
+        .image-vocab-select option {
+            background: var(--surface-1);
+            color: var(--text-main);
+        }
+
+        @media (max-width: 560px) {
+            .vocab-library-switch {
+                grid-template-columns: 1fr;
+            }
+
+            .image-vocab-toolbar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+        }
+
         /* Vocabulary Flashcard Style */
         .vocab-panel {
             display: flex;
@@ -579,9 +668,23 @@
             text-align: center;
             font-style: italic;
             line-height: 1.5;
-            max-width: 90%;
+        }
+
+        .word-example-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            max-width: 92%;
             border-top: 1px dashed rgba(255,255,255,0.05);
             padding-top: 0.85rem;
+        }
+
+        .example-speaker-btn {
+            width: 30px;
+            height: 30px;
+            flex-shrink: 0;
+            font-size: 0.85rem;
         }
 
         .card-tip {

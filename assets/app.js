@@ -2,6 +2,8 @@
         let checklistState = JSON.parse(localStorage.getItem('toeic_checklist_state')) || {};
         let vocabIndexState = 0; // Current word index for active day card
         let activeVocabMode = 'flashcard'; // 'flashcard' or 'quiz'
+        let activeVocabSource = 'daily'; // 'daily' or 'image'
+        let activeImageVocabSet = 'Image37';
         let activeGrammarTab = 'formula'; // 'formula', 'usage', or 'examples'
 
         // Current UI state variables
@@ -541,7 +543,7 @@
         function renderDayTabs() {
             const dayTabs = document.getElementById("dayTabs");
             dayTabs.innerHTML = "";
-
+            
             const activeWeekData = weeksData.find(w => w.id === activeWeek);
             
             activeWeekData.days.forEach(day => {
@@ -557,6 +559,51 @@
                 };
                 dayTabs.appendChild(btn);
             });
+        }
+
+        function getDailyVocabKey() {
+            return `Week${activeWeek}_${activeDay}`;
+        }
+
+        function getActiveVocabKey() {
+            return activeVocabSource === 'image' ? activeImageVocabSet : getDailyVocabKey();
+        }
+
+        function getVocabDb(vocabKey) {
+            return vocabDatabase[vocabKey] || (typeof imageVocabDatabase !== 'undefined' ? imageVocabDatabase[vocabKey] : null);
+        }
+
+        function updateVocabSourceControls() {
+            const dailyBtn = document.getElementById("sourceDailyVocab");
+            const imageBtn = document.getElementById("sourceImageVocab");
+            const imageSelect = document.getElementById("imageVocabSetSelect");
+            const imageToolbar = document.getElementById("imageVocabToolbar");
+            if (!dailyBtn || !imageBtn || !imageSelect || !imageToolbar) return;
+
+            dailyBtn.classList.toggle("active", activeVocabSource === 'daily');
+            imageBtn.classList.toggle("active", activeVocabSource === 'image');
+            imageToolbar.classList.toggle("is-visible", activeVocabSource === 'image');
+            imageSelect.value = activeImageVocabSet;
+        }
+
+        window.switchVocabSource = function(source) {
+            if (source === 'daily' && !vocabDatabase[getDailyVocabKey()]) {
+                source = 'image';
+            }
+            activeVocabSource = source;
+            vocabIndexState = 0;
+            updateVocabSourceControls();
+            renderWordGrid(getActiveVocabKey());
+            switchVocabMode('flashcard');
+        }
+
+        window.switchImageVocabSet = function(setKey) {
+            activeImageVocabSet = setKey;
+            activeVocabSource = 'image';
+            vocabIndexState = 0;
+            updateVocabSourceControls();
+            renderWordGrid(getActiveVocabKey());
+            switchVocabMode('flashcard');
         }
 
         // Load tasks, vocab and grammar content for active week and day
@@ -592,23 +639,24 @@
             });
 
             // 2. Render Vocabulary Card
-            const vocabKey = `Week${activeWeek}_${activeDay}`;
+            const dailyVocabKey = getDailyVocabKey();
             const vocabPanel = document.getElementById("vocabPanel");
+            vocabPanel.style.display = "flex";
             
-            if (vocabDatabase[vocabKey]) {
-                vocabPanel.style.display = "flex";
-                vocabIndexState = 0;
-                
-                // Redraw word list grid
-                renderWordGrid(vocabKey);
-                
-                if (activeVocabMode === 'quiz') {
-                    startQuiz(vocabKey);
-                } else {
-                    updateVocabCardUI(vocabKey);
-                }
+            if (activeVocabSource === 'daily' && !vocabDatabase[dailyVocabKey]) {
+                activeVocabSource = 'image';
+            }
+            updateVocabSourceControls();
+            vocabIndexState = 0;
+            const vocabKey = getActiveVocabKey();
+            
+            // Redraw word list grid
+            renderWordGrid(vocabKey);
+            
+            if (activeVocabMode === 'quiz') {
+                startQuiz(vocabKey);
             } else {
-                vocabPanel.style.display = "none";
+                updateVocabCardUI(vocabKey);
             }
 
             // 3. Render Grammar Card
@@ -690,7 +738,8 @@
 
         // Update Vocab Card layout
         function updateVocabCardUI(vocabKey) {
-            const db = vocabDatabase[vocabKey];
+            const db = getVocabDb(vocabKey);
+            if (!db) return;
             const word = db.words[vocabIndexState];
             
             // Reset flip state
@@ -698,6 +747,8 @@
             
             document.getElementById("vocabThemeName").innerText = db.theme;
             document.getElementById("currentWordIndex").innerText = vocabIndexState + 1;
+            document.getElementById("totalWordCount").innerText = db.words.length;
+            document.getElementById("vocabScopeLabel").innerText = activeVocabSource === 'image' ? "Bộ từ" : "Chủ đề";
             
             document.getElementById("wordPos").innerText = word.pos;
             document.getElementById("wordName").innerText = word.word;
@@ -721,7 +772,8 @@
             const grid = document.getElementById("wordGrid");
             grid.innerHTML = "";
             
-            const db = vocabDatabase[vocabKey];
+            const db = getVocabDb(vocabKey);
+            if (!db) return;
             const mastered = JSON.parse(localStorage.getItem('toeic_mastered_words')) || {};
             
             db.words.forEach((word, idx) => {
@@ -740,25 +792,29 @@
         }
 
         function nextVocabWord() {
-            const vocabKey = `Week${activeWeek}_${activeDay}`;
-            if (vocabDatabase[vocabKey]) {
-                vocabIndexState = (vocabIndexState + 1) % vocabDatabase[vocabKey].words.length;
+            const vocabKey = getActiveVocabKey();
+            const db = getVocabDb(vocabKey);
+            if (db) {
+                vocabIndexState = (vocabIndexState + 1) % db.words.length;
                 updateVocabCardUI(vocabKey);
             }
         }
 
         function prevVocabWord() {
-            const vocabKey = `Week${activeWeek}_${activeDay}`;
-            if (vocabDatabase[vocabKey]) {
-                vocabIndexState = (vocabIndexState - 1 + vocabDatabase[vocabKey].words.length) % vocabDatabase[vocabKey].words.length;
+            const vocabKey = getActiveVocabKey();
+            const db = getVocabDb(vocabKey);
+            if (db) {
+                vocabIndexState = (vocabIndexState - 1 + db.words.length) % db.words.length;
                 updateVocabCardUI(vocabKey);
             }
         }
 
         function markWordMastered() {
             let mastered = JSON.parse(localStorage.getItem('toeic_mastered_words')) || {};
-            const vocabKey = `Week${activeWeek}_${activeDay}`;
-            const word = vocabDatabase[vocabKey].words[vocabIndexState];
+            const vocabKey = getActiveVocabKey();
+            const db = getVocabDb(vocabKey);
+            if (!db) return;
+            const word = db.words[vocabIndexState];
             
             mastered[word.word] = true;
             localStorage.setItem('toeic_mastered_words', JSON.stringify(mastered));
@@ -779,20 +835,35 @@
             }, 300);
         }
 
-        // Speech Synthesis for Vocabulary
-        function handleSpeakClick(event) {
-            event.stopPropagation(); // prevent card flip
-            const vocabKey = `Week${activeWeek}_${activeDay}`;
-            const word = vocabDatabase[vocabKey].words[vocabIndexState];
-            
+        function speakEnglishText(text, rate = 0.85) {
             const synth = window.speechSynthesis;
             if (synth.speaking) {
                 synth.cancel();
             }
-            const utter = new SpeechSynthesisUtterance(word.word);
+
+            const utter = new SpeechSynthesisUtterance(text);
             utter.lang = 'en-US';
-            utter.rate = 0.85;
+            utter.rate = rate;
             synth.speak(utter);
+        }
+
+        // Speech Synthesis for Vocabulary
+        function handleSpeakClick(event) {
+            event.stopPropagation(); // prevent card flip
+            const vocabKey = getActiveVocabKey();
+            const db = getVocabDb(vocabKey);
+            if (!db) return;
+            const word = db.words[vocabIndexState];
+            speakEnglishText(word.word, 0.68);
+        }
+
+        function handleExampleSpeakClick(event) {
+            event.stopPropagation(); // prevent card flip
+            const vocabKey = getActiveVocabKey();
+            const db = getVocabDb(vocabKey);
+            if (!db) return;
+            const word = db.words[vocabIndexState];
+            speakEnglishText(word.example, 0.72);
         }
 
         function handleCardClick(event, cardEl) {
@@ -808,7 +879,8 @@
             document.getElementById("tabFlashcard").className = `panel-tab ${mode === 'flashcard' ? 'active' : ''}`;
             document.getElementById("tabQuiz").className = `panel-tab ${mode === 'quiz' ? 'active' : ''}`;
             
-            const vocabKey = `Week${activeWeek}_${activeDay}`;
+            const vocabKey = getActiveVocabKey();
+            renderWordGrid(vocabKey);
             
             if (mode === 'flashcard') {
                 document.getElementById("vocabFlashcardView").style.display = "block";
@@ -823,7 +895,7 @@
 
         // Quiz Logic Engine
         function startQuiz(vocabKey) {
-            const db = vocabDatabase[vocabKey];
+            const db = getVocabDb(vocabKey);
             if (!db) return;
             
             // Generate 5 random questions
@@ -930,7 +1002,7 @@
         }
 
         window.restartQuiz = function() {
-            const vocabKey = `Week${activeWeek}_${activeDay}`;
+            const vocabKey = getActiveVocabKey();
             startQuiz(vocabKey);
         }
 

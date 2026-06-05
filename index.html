@@ -34,54 +34,58 @@
             </div>
         </div>
 
-        <ul class="week-list" id="weekList">
-            <!-- Dynamic Weeks loaded here -->
-        </ul>
+        <div class="sidebar-scroll">
+            <ul class="week-list" id="weekList">
+                <!-- Dynamic Weeks loaded here -->
+            </ul>
 
-        <!-- EXERCISE NAV BUTTON -->
-        <li class="week-item week-item--exercise" id="navExercise" onclick="showExercisePage()" title="Ôn luyện bài tập Part 5">
-            <div style="display:flex;align-items:center;gap:0.7rem;font-weight:600;font-size:0.92rem;">
-                <span style="font-size:1.1rem;">✏️</span>
-                Ôn Luyện Bài Tập
-            </div>
-            <span class="week-progress-circle" style="background:rgba(139,92,246,0.15);color:#a78bfa;">Part 5</span>
-        </li>
+            <ul class="sidebar-nav-extra">
+                <!-- EXERCISE NAV BUTTON -->
+                <li class="week-item week-item--exercise" id="navExercise" onclick="showExercisePage()" title="Ôn luyện bài tập Part 5">
+                    <div style="display:flex;align-items:center;gap:0.7rem;font-weight:600;font-size:0.92rem;">
+                        <span style="font-size:1.1rem;">✏️</span>
+                        Ôn Luyện Bài Tập
+                    </div>
+                    <span class="week-progress-circle" style="background:rgba(139,92,246,0.15);color:#a78bfa;">Part 5</span>
+                </li>
 
-        <!-- VOCAB TEST NAV BUTTON -->
-        <li class="week-item week-item--vocab-test" id="navVocabTest" onclick="showVocabTestPage()" title="Kiểm tra toàn bộ từ vựng đã học">
-            <div style="display:flex;align-items:center;gap:0.7rem;font-weight:600;font-size:0.92rem;">
-                <span style="font-size:1.1rem;">📝</span>
-                Kiểm Tra Từ Vựng
-            </div>
-            <span class="week-progress-circle" style="background:rgba(16,185,129,0.15);color:#34d399;">Test</span>
-        </li>
+                <!-- VOCAB TEST NAV BUTTON -->
+                <li class="week-item week-item--vocab-test" id="navVocabTest" onclick="showVocabTestPage()" title="Kiểm tra toàn bộ từ vựng đã học">
+                    <div style="display:flex;align-items:center;gap:0.7rem;font-weight:600;font-size:0.92rem;">
+                        <span style="font-size:1.1rem;">📝</span>
+                        Kiểm Tra Từ Vựng
+                    </div>
+                    <span class="week-progress-circle" style="background:rgba(16,185,129,0.15);color:#34d399;">Test</span>
+                </li>
+            </ul>
 
-        <!-- THEME PANEL -->
-        <div class="vip-panel" id="vipPanel">
-            <div class="vip-header">
-                <span class="vip-crown">🎨</span>
-                <span class="vip-title">Cá nhân hóa</span>
-            </div>
-            
-            <div class="vip-section-title">Chọn màu giao diện</div>
-            <div class="theme-selector-row">
-                <button class="theme-btn theme-btn--default active" data-theme="default" onclick="changeTheme('default')" title="Mặc định" aria-label="Màu mặc định"></button>
-                <button class="theme-btn theme-btn--rose-gold" data-theme="rose-gold" onclick="changeTheme('rose-gold')" title="Rose Gold" aria-label="Màu rose gold"></button>
-                <button class="theme-btn theme-btn--lavender" data-theme="lavender" onclick="changeTheme('lavender')" title="Lavender" aria-label="Màu lavender"></button>
-                <button class="theme-btn theme-btn--emerald" data-theme="emerald" onclick="changeTheme('emerald')" title="Emerald" aria-label="Màu emerald"></button>
-            </div>
-            
-            <div class="vip-control-row">
-                <button class="vip-action-btn" id="ambientMusicBtn" onclick="toggleAmbientMusic()" title="Nhạc nền Lofi thư giãn">
-                    🎵 Nhạc Lofi
-                </button>
-            </div>
-            <div class="sfx-row">
-                <span>Hiệu ứng chuông (SFX)</span>
-                <label class="switch">
-                    <input type="checkbox" id="sfxToggle" checked onchange="toggleSfxState()">
-                    <span class="slider"></span>
-                </label>
+            <!-- THEME PANEL -->
+            <div class="vip-panel" id="vipPanel">
+                <div class="vip-header">
+                    <span class="vip-crown">🎨</span>
+                    <span class="vip-title">Cá nhân hóa</span>
+                </div>
+                
+                <div class="vip-section-title">Chọn màu giao diện</div>
+                <div class="theme-selector-row">
+                    <button class="theme-btn theme-btn--default active" data-theme="default" onclick="changeTheme('default')" title="Mặc định" aria-label="Màu mặc định"></button>
+                    <button class="theme-btn theme-btn--rose-gold" data-theme="rose-gold" onclick="changeTheme('rose-gold')" title="Rose Gold" aria-label="Màu rose gold"></button>
+                    <button class="theme-btn theme-btn--lavender" data-theme="lavender" onclick="changeTheme('lavender')" title="Lavender" aria-label="Màu lavender"></button>
+                    <button class="theme-btn theme-btn--emerald" data-theme="emerald" onclick="changeTheme('emerald')" title="Emerald" aria-label="Màu emerald"></button>
+                </div>
+                
+                <div class="vip-control-row">
+                    <button class="vip-action-btn" id="ambientMusicBtn" onclick="toggleAmbientMusic()" title="Nhạc nền Lofi thư giãn">
+                        🎵 Nhạc Lofi
+                    </button>
+                </div>
+                <div class="sfx-row">
+                    <span>Hiệu ứng chuông (SFX)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sfxToggle" checked onchange="toggleSfxState()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
         </div>
 

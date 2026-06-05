@@ -38,6 +38,24 @@
             <!-- Dynamic Weeks loaded here -->
         </ul>
 
+        <!-- EXERCISE NAV BUTTON -->
+        <li class="week-item week-item--exercise" id="navExercise" onclick="showExercisePage()" title="Ôn luyện bài tập Part 5">
+            <div style="display:flex;align-items:center;gap:0.7rem;font-weight:600;font-size:0.92rem;">
+                <span style="font-size:1.1rem;">✏️</span>
+                Ôn Luyện Bài Tập
+            </div>
+            <span class="week-progress-circle" style="background:rgba(139,92,246,0.15);color:#a78bfa;">Part 5</span>
+        </li>
+
+        <!-- VOCAB TEST NAV BUTTON -->
+        <li class="week-item week-item--vocab-test" id="navVocabTest" onclick="showVocabTestPage()" title="Kiểm tra toàn bộ từ vựng đã học">
+            <div style="display:flex;align-items:center;gap:0.7rem;font-weight:600;font-size:0.92rem;">
+                <span style="font-size:1.1rem;">📝</span>
+                Kiểm Tra Từ Vựng
+            </div>
+            <span class="week-progress-circle" style="background:rgba(16,185,129,0.15);color:#34d399;">Test</span>
+        </li>
+
         <!-- THEME PANEL -->
         <div class="vip-panel" id="vipPanel">
             <div class="vip-header">
@@ -82,9 +100,9 @@
     </nav>
 
     <!-- MAIN CONTENT -->
-    <main class="main-content">
+    <main class="main-content" id="mainContent">
         <!-- HEADER -->
-        <header class="header-panel">
+        <header class="header-panel" id="mainHeader">
             <div class="welcome-text">
                 <h2 id="currentWeekTitle">Tuần 1: Nền tảng học tập</h2>
                 <p id="currentWeekDesc">Tập trung rèn luyện các ngữ pháp cơ bản và làm quen với từ vựng cốt lõi</p>
@@ -107,7 +125,7 @@
         </div>
 
         <!-- STUDY DASHBOARD GRID -->
-        <div class="study-grid">
+        <div class="study-grid" id="mainStudyGrid">
             
             <!-- LEFT COLUMN: Checklist & Tasks -->
             <div class="study-box">
@@ -385,7 +403,7 @@
             </div>
 
             <!-- MỸ LỆ EXCLUSIVE ZONE -->
-            <div class="myle-exclusive-grid">
+            <div class="myle-exclusive-grid" id="mainMyleGrid">
                 <div class="study-box focus-board">
                     <h3 class="box-title">
                         <div class="title-left">
@@ -455,11 +473,372 @@
             </div>
 
         </div>
+
+        <!-- =====================================================
+             EXERCISE PRACTICE PAGE
+             ===================================================== -->
+        <div id="exercisePage" class="exercise-page is-hidden">
+
+            <!-- Page Header -->
+            <header class="header-panel">
+                <div class="welcome-text">
+                    <h2>✏️ Ôn Luyện Bài Tập Part 5</h2>
+                    <p>Thực hành các dạng bài điền vào chỗ trống từ sách KN Education</p>
+                </div>
+                <div class="stats-group">
+                    <button class="btn" onclick="showMainPage()" style="gap:0.5rem;">
+                        ← Quay lại lộ trình
+                    </button>
+                </div>
+            </header>
+
+            <!-- SET SELECTION VIEW -->
+            <div id="exerciseSetView">
+                <div class="exercise-set-header">
+                    <h3>📚 Chọn bộ bài tập để luyện</h3>
+                    <p>Mỗi bộ gồm các câu hỏi trắc nghiệm dạng Part 5 TOEIC — điền vào chỗ trống. Chọn đáp án và xem giải thích ngay sau mỗi câu!</p>
+                </div>
+                <div id="exerciseSetGrid">
+                    <!-- Populated by exercises.js -->
+                </div>
+            </div>
+
+            <!-- QUIZ VIEW (Hidden by default) -->
+            <div id="exerciseQuizView" class="is-hidden">
+                <div class="exercise-quiz-container">
+                    <!-- Top bar -->
+                    <div class="ex-quiz-topbar">
+                        <div class="ex-quiz-meta">
+                            <h3 id="exSetTitle">Ngữ Pháp 1</h3>
+                            <span id="exSetSubtitle">Trang 21</span>
+                        </div>
+                        <div class="ex-quiz-stats">
+                            <div class="ex-stat-pill">
+                                <span>⏱</span>
+                                <span id="exTimer">0:00</span>
+                            </div>
+                            <button class="btn" onclick="backToExerciseSets()" style="padding:0.5rem 1rem;font-size:0.85rem;">✕ Thoát</button>
+                        </div>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="ex-progress-track">
+                        <div class="ex-progress-fill" id="exQProgress" style="width:0%"></div>
+                    </div>
+
+                    <!-- Question card -->
+                    <div class="ex-question-card">
+                        <div class="ex-q-num" id="exQNum">Câu 1</div>
+                        <p class="ex-q-sentence" id="exQSentence"></p>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="ex-options-grid" id="exQOptions">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <!-- Explanation (shown after selection) -->
+                    <div id="exExplanation" class="ex-explanation is-hidden"></div>
+
+                    <!-- Navigation -->
+                    <div class="ex-nav-row">
+                        <button id="exBtnPrev" class="btn" onclick="prevExerciseQuestion()">◀ Trước</button>
+                        <span class="ex-counter-badge" id="exQCounter">Câu 1 / 10</span>
+                        <button id="exBtnNext" class="btn btn-primary" onclick="nextExerciseQuestion()">Tiếp ▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULTS / REVIEW VIEW (Hidden by default) -->
+            <div id="exerciseReviewView" class="is-hidden">
+                <div class="exercise-result-container">
+
+                    <!-- Score card -->
+                    <div class="ex-result-card">
+                        <div class="ex-result-circle ex-result-circle--high" id="exResultCircle">
+                            <span id="exResultScore">0/0</span>
+                            <span id="exResultPercent">0%</span>
+                        </div>
+                        <div id="exResultGrade" style="font-size:1.4rem;font-weight:700;">🏆 Xuất sắc!</div>
+                        <div class="ex-result-stats">
+                            <div class="ex-result-stat">
+                                <span class="ex-result-stat-val" id="exResultTime">0:00</span>
+                                <span class="ex-result-stat-lbl">Thời gian</span>
+                            </div>
+                        </div>
+                        <div class="ex-result-actions">
+                            <button class="btn btn-primary" onclick="retryExerciseSet()">🔄 Làm lại</button>
+                            <button class="btn" onclick="backToExerciseSets()">📚 Chọn bộ khác</button>
+                        </div>
+                    </div>
+
+                    <!-- Review list -->
+                    <div class="ex-review-section">
+                        <h3>📋 Xem lại chi tiết từng câu</h3>
+                        <div id="exReviewList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <!-- END EXERCISE PRACTICE PAGE -->
+
+        <!-- =====================================================
+             VOCABULARY TEST PAGE
+             ===================================================== -->
+        <div id="vocabTestPage" class="exercise-page is-hidden">
+            <!-- Page Header -->
+            <header class="header-panel">
+                <div class="welcome-text">
+                    <h2 id="vtTestMetaTitle">📝 Kiểm Tra Từ Vựng</h2>
+                    <p>Kiểm tra và rà soát toàn bộ từ vựng đã học theo cấu hình tùy chỉnh</p>
+                </div>
+                <div class="stats-group">
+                    <button class="btn" onclick="showMainPage()" style="gap:0.5rem;">
+                        ← Quay lại lộ trình
+                    </button>
+                </div>
+            </header>
+
+            <!-- SETUP VIEW -->
+            <div id="vocabTestSetupView" class="vt-setup-container">
+                <div class="vt-setup-card">
+                    <h3>⚙️ Cấu hình bài kiểm tra</h3>
+                    <p class="vt-setup-intro">Thiết lập nguồn từ vựng, số lượng câu hỏi và chế độ dịch để bắt đầu ôn tập.</p>
+                    
+                    <div class="vt-setup-sections">
+                        <!-- 1. Category filter selection -->
+                        <div class="vt-setup-section">
+                            <label class="vt-setup-label">1. Phạm vi từ vựng:</label>
+                            <div class="vt-setup-options">
+                                <label class="vt-setup-radio">
+                                    <input type="radio" name="vtCategory" value="all" checked onchange="updateFilterCounts()">
+                                    <span class="vt-radio-box"></span>
+                                    <div>
+                                        <strong>Tất cả từ vựng</strong>
+                                        <p id="vtCountAll" class="vt-radio-desc">(0 từ)</p>
+                                    </div>
+                                </label>
+                                <label class="vt-setup-radio">
+                                    <input type="radio" name="vtCategory" value="mastered" onchange="updateFilterCounts()">
+                                    <span class="vt-radio-box"></span>
+                                    <div>
+                                        <strong>Từ vựng đã thuộc (Mastered)</strong>
+                                        <p id="vtCountMastered" class="vt-radio-desc">(0 từ)</p>
+                                    </div>
+                                </label>
+                                <label class="vt-setup-radio">
+                                    <input type="radio" name="vtCategory" value="learning" onchange="updateFilterCounts()">
+                                    <span class="vt-radio-box"></span>
+                                    <div>
+                                        <strong>Từ vựng chưa thuộc (Cần ôn)</strong>
+                                        <p id="vtCountLearning" class="vt-radio-desc">(0 từ)</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 2. Test Direction selection -->
+                        <div class="vt-setup-section">
+                            <label class="vt-setup-label">2. Chế độ kiểm tra:</label>
+                            <div class="vt-setup-options vt-setup-options--row">
+                                <label class="vt-setup-radio">
+                                    <input type="radio" name="vtDirection" value="en_vi" checked>
+                                    <span class="vt-radio-box"></span>
+                                    <div>
+                                        <strong>Anh ➔ Việt</strong>
+                                        <p class="vt-radio-desc">Nhìn từ Tiếng Anh, chọn nghĩa Tiếng Việt</p>
+                                    </div>
+                                </label>
+                                <label class="vt-setup-radio">
+                                    <input type="radio" name="vtDirection" value="vi_en">
+                                    <span class="vt-radio-box"></span>
+                                    <div>
+                                        <strong>Việt ➔ Anh</strong>
+                                        <p class="vt-radio-desc">Nhìn nghĩa Tiếng Việt, chọn từ Tiếng Anh</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 3. Question Count & Sound Settings -->
+                        <div class="vt-setup-section vt-setup-section--row">
+                            <div style="flex: 1; min-width: 200px;">
+                                <label for="vtQCount" class="vt-setup-label">3. Số lượng câu hỏi:</label>
+                                <select id="vtQCount" class="vt-select">
+                                    <option value="10">10 câu</option>
+                                    <option value="20" selected>20 câu</option>
+                                    <option value="50">50 câu</option>
+                                    <option value="all">Tất cả từ vựng có sẵn</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; min-width: 200px; display: flex; align-items: center; margin-top: 1.5rem;">
+                                <label class="switch-row" style="display:flex; align-items:center; gap:0.6rem; color:white; cursor:pointer;">
+                                    <input type="checkbox" id="vtAutoPronounce" checked style="width:18px; height:18px; cursor:pointer;">
+                                    <span>Tự động phát âm Tiếng Anh (Audio)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn--large vt-start-btn" onclick="startVocabTest()">
+                        🚀 Bắt đầu kiểm tra ngay
+                    </button>
+                </div>
+            </div>
+
+            <!-- QUIZ VIEW (Hidden by default) -->
+            <div id="vocabTestQuizView" class="is-hidden">
+                <div class="exercise-quiz-container">
+                    
+                    <!-- Top bar -->
+                    <div class="ex-quiz-topbar">
+                        <div class="ex-quiz-meta">
+                            <h3 id="vtQNumLabel">Câu hỏi 1</h3>
+                            <span id="vtTimer">0:00</span>
+                        </div>
+                        <div class="ex-quiz-stats">
+                            <button class="btn" onclick="backToVocabSetup()" style="padding:0.5rem 1rem;font-size:0.85rem;">✕ Thoát</button>
+                        </div>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="ex-progress-track">
+                        <div class="ex-progress-fill" id="vtQProgress" style="width:0%"></div>
+                    </div>
+
+                    <!-- Question card -->
+                    <div class="ex-question-card vt-q-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                            <span id="vtQPrompt" class="vt-q-prompt">Chọn nghĩa Tiếng Việt đúng cho từ dưới đây:</span>
+                            <button id="vtQAudioBtn" class="speaker-btn" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;" title="Phát âm từ vựng">🔊 Nghe phát âm</button>
+                        </div>
+                        <div class="vt-q-main">
+                            <span id="vtQWord" class="vt-q-word">colleague</span>
+                            <span id="vtQPron" class="vt-q-pron">/ˈkɒliːɡ/</span>
+                        </div>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="ex-options-grid vt-options-grid" id="vtQOptions">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <!-- Detail Explanation (shown after selecting an option) -->
+                    <div id="vtExplanation" class="vt-explanation is-hidden">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="ex-nav-row">
+                        <span class="ex-counter-badge" id="vtQCounter">Câu 1 / 20</span>
+                        <button id="vtBtnNext" class="btn btn-primary" onclick="nextVocabQuestion()" disabled>Tiếp theo ▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULT VIEW (Hidden by default) -->
+            <div id="vocabTestResultView" class="is-hidden">
+                <div class="exercise-result-container">
+                    <!-- Score card -->
+                    <div class="ex-result-card">
+                        <div class="ex-result-circle" id="vtResultCircle">
+                            <span id="vtResultScore">0/0</span>
+                            <span id="vtResultPercent">0%</span>
+                        </div>
+                        <div id="vtResultGrade" style="font-size:1.4rem;font-weight:700;">🏆 Xuất sắc!</div>
+                        <div class="ex-result-stats">
+                            <div class="ex-result-stat">
+                                <span class="ex-result-stat-val" id="vtResultTime">0:00</span>
+                                <span class="ex-result-stat-lbl">Thời gian</span>
+                            </div>
+                        </div>
+                        <div class="ex-result-actions">
+                            <button class="btn btn-primary" onclick="retryVocabTest()">🔄 Làm lại</button>
+                            <button class="btn" onclick="backToVocabSetup()">⚙️ Đổi cấu hình</button>
+                            <button class="btn" onclick="showMainPage()">🏠 Quay lại trang chủ</button>
+                        </div>
+                    </div>
+
+                    <!-- Review list -->
+                    <div class="ex-review-section">
+                        <h3>📋 Xem lại chi tiết từng câu hỏi</h3>
+                        <div id="vtReviewList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- STUDY DATABASE & APP LOGIC -->
     <script src="./assets/data.js"></script>
     <script src="./assets/app.js"></script>
+    <script src="./assets/exercises.js"></script>
+    <script src="./assets/vocab-test.js"></script>
+    <script>
+        // Navigation between main planner, exercise page and vocabulary test page
+        function showExercisePage() {
+            document.getElementById('exercisePage').classList.remove('is-hidden');
+            document.getElementById('vocabTestPage').classList.add('is-hidden');
+            // Hide main study content elements
+            document.getElementById('mainHeader')?.classList.add('is-hidden');
+            document.getElementById('dayTabs')?.classList.add('is-hidden');
+            document.getElementById('mainStudyGrid')?.classList.add('is-hidden');
+            document.getElementById('mainMyleGrid')?.classList.add('is-hidden');
+            // Mark nav active
+            document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('navExercise')?.classList.add('active');
+            // Init exercise page
+            initExercisePage();
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function showVocabTestPage() {
+            document.getElementById('vocabTestPage').classList.remove('is-hidden');
+            document.getElementById('exercisePage').classList.add('is-hidden');
+            // Hide main study content elements
+            document.getElementById('mainHeader')?.classList.add('is-hidden');
+            document.getElementById('dayTabs')?.classList.add('is-hidden');
+            document.getElementById('mainStudyGrid')?.classList.add('is-hidden');
+            document.getElementById('mainMyleGrid')?.classList.add('is-hidden');
+            // Mark nav active
+            document.querySelectorAll('.week-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('navVocabTest')?.classList.add('active');
+            // Init vocab test page
+            if (typeof initVocabTestPage === 'function') {
+                initVocabTestPage();
+            }
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function showMainPage() {
+            document.getElementById('exercisePage').classList.add('is-hidden');
+            document.getElementById('vocabTestPage').classList.add('is-hidden');
+            // Show main study content
+            document.getElementById('mainHeader')?.classList.remove('is-hidden');
+            document.getElementById('dayTabs')?.classList.remove('is-hidden');
+            document.getElementById('mainStudyGrid')?.classList.remove('is-hidden');
+            document.getElementById('mainMyleGrid')?.classList.remove('is-hidden');
+            // Remove active from special navs
+            document.getElementById('navExercise')?.classList.remove('active');
+            document.getElementById('navVocabTest')?.classList.remove('active');
+            // Restore week selection highlight
+            const activeWeek = document.querySelector('.week-item[data-week].active');
+            if (!activeWeek) {
+                const firstWeek = document.querySelector('.week-item[data-week]');
+                if (firstWeek) firstWeek.classList.add('active');
+            }
+            window.scrollTo(0, 0);
+        }
+    </script>
 </body>
 </html>
 

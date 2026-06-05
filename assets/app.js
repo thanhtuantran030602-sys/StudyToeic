@@ -516,6 +516,10 @@
                     
                     renderDayTabs();
                     loadActiveDayDashboard();
+
+                    if (typeof showMainPage === 'function') {
+                        showMainPage();
+                    }
                 };
 
                 // Calculate progress of this specific week

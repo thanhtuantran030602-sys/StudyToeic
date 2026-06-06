@@ -877,23 +877,31 @@
             }
         }
 
-        // Switch panel modes: Flashcard or Quiz
+        // Switch panel modes: Flashcard, Quiz, or Review Test
         window.switchVocabMode = function(mode) {
             activeVocabMode = mode;
             document.getElementById("tabFlashcard").className = `panel-tab ${mode === 'flashcard' ? 'active' : ''}`;
             document.getElementById("tabQuiz").className = `panel-tab ${mode === 'quiz' ? 'active' : ''}`;
+            document.getElementById("tabReviewTest").className = `panel-tab ${mode === 'review-test' ? 'active' : ''}`;
             
             const vocabKey = getActiveVocabKey();
             renderWordGrid(vocabKey);
             
+            // Toggle views using is-hidden class consistently
+            const flashEl = document.getElementById("vocabFlashcardView");
+            const quizEl = document.getElementById("vocabQuizView");
+            const rvtEl = document.getElementById("vocabReviewTestView");
+
+            flashEl.classList.toggle("is-hidden", mode !== 'flashcard');
+            quizEl.classList.toggle("is-hidden", mode !== 'quiz');
+            rvtEl.classList.toggle("is-hidden", mode !== 'review-test');
+
             if (mode === 'flashcard') {
-                document.getElementById("vocabFlashcardView").style.display = "block";
-                document.getElementById("vocabQuizView").style.display = "none";
                 updateVocabCardUI(vocabKey);
-            } else {
-                document.getElementById("vocabFlashcardView").style.display = "none";
-                document.getElementById("vocabQuizView").style.display = "block";
+            } else if (mode === 'quiz') {
                 startQuiz(vocabKey);
+            } else if (mode === 'review-test') {
+                initReviewTestSetup();
             }
         }
 
@@ -1009,6 +1017,261 @@
             const vocabKey = getActiveVocabKey();
             startQuiz(vocabKey);
         }
+
+        // ============================================================
+        // VOCAB REVIEW TEST ENGINE (In-panel mini full test)
+        // ============================================================
+
+        let rvtQuestions = [];
+        let rvtCurrentIndex = 0;
+        let rvtScore = 0;
+        let rvtAnswers = [];
+        let rvtDirection = 'en_vi';
+        let rvtTimerInterval = null;
+        let rvtSeconds = 0;
+
+        function initReviewTestSetup() {
+            // Stop any running timer
+            rvtStopTimer();
+            // Show setup, hide quiz & result
+            document.getElementById("rvtSetupView").classList.remove("is-hidden");
+            document.getElementById("rvtQuizView").classList.add("is-hidden");
+            document.getElementById("rvtResultView").classList.add("is-hidden");
+
+            // Update setup description with current vocab set info
+            const vocabKey = getActiveVocabKey();
+            const db = getVocabDb(vocabKey);
+            if (db) {
+                document.getElementById("rvtSetupDesc").innerText =
+                    `Kiểm tra ${db.words.length} từ vựng — Chủ đề: ${db.theme}`;
+            }
+        }
+
+        window.startReviewTest = function() {
+            const vocabKey = getActiveVocabKey();
+            const db = getVocabDb(vocabKey);
+            if (!db || db.words.length === 0) {
+                alert("Không tìm thấy từ vựng để kiểm tra!");
+                return;
+            }
+
+            rvtDirection = document.querySelector('input[name="rvtDir"]:checked').value;
+            const countVal = document.querySelector('input[name="rvtCount"]:checked').value;
+
+            // Build questions
+            const allWords = [...db.words];
+            const shuffled = allWords.sort(() => 0.5 - Math.random());
+            let qCount = countVal === 'all' ? shuffled.length : parseInt(countVal);
+            qCount = Math.min(qCount, shuffled.length);
+            const selected = shuffled.slice(0, qCount);
+
+            const questionField = rvtDirection === 'en_vi' ? 'word' : 'mean';
+            const answerField = rvtDirection === 'en_vi' ? 'mean' : 'word';
+
+            rvtQuestions = selected.map(item => {
+                // Get distractors from the full set
+                let distractors = allWords
+                    .filter(w => w[answerField].toLowerCase().trim() !== item[answerField].toLowerCase().trim())
+                    .map(w => w[answerField]);
+                distractors = Array.from(new Set(distractors)).sort(() => 0.5 - Math.random()).slice(0, 3);
+                const choices = [item[answerField], ...distractors].sort(() => 0.5 - Math.random());
+                return {
+                    wordData: item,
+                    questionText: item[questionField],
+                    correctAnswer: item[answerField],
+                    choices
+                };
+            });
+
+            rvtCurrentIndex = 0;
+            rvtScore = 0;
+            rvtAnswers = [];
+
+            // Switch to quiz view
+            document.getElementById("rvtSetupView").classList.add("is-hidden");
+            document.getElementById("rvtQuizView").classList.remove("is-hidden");
+            document.getElementById("rvtResultView").classList.add("is-hidden");
+
+            rvtStartTimer();
+            rvtRenderQuestion();
+
+            if (window.playSfx) window.playSfx('click');
+        };
+
+        function rvtStartTimer() {
+            rvtSeconds = 0;
+            document.getElementById("rvtTimer").innerText = "0:00";
+            if (rvtTimerInterval) clearInterval(rvtTimerInterval);
+            rvtTimerInterval = setInterval(() => {
+                rvtSeconds++;
+                const m = Math.floor(rvtSeconds / 60);
+                const s = rvtSeconds % 60;
+                document.getElementById("rvtTimer").innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            }, 1000);
+        }
+
+        function rvtStopTimer() {
+            if (rvtTimerInterval) {
+                clearInterval(rvtTimerInterval);
+                rvtTimerInterval = null;
+            }
+        }
+
+        function rvtRenderQuestion() {
+            const q = rvtQuestions[rvtCurrentIndex];
+
+            // Progress
+            const pct = (rvtCurrentIndex / rvtQuestions.length) * 100;
+            document.getElementById("rvtProgress").style.width = `${pct}%`;
+            document.getElementById("rvtCounter").innerText = `Câu ${rvtCurrentIndex + 1} / ${rvtQuestions.length}`;
+
+            // Prompt label
+            document.getElementById("rvtPrompt").innerText =
+                rvtDirection === 'en_vi' ? "Chọn nghĩa Tiếng Việt đúng:" : "Chọn từ Tiếng Anh đúng:";
+
+            // Word display
+            const displayEl = document.getElementById("rvtWordDisplay");
+            if (rvtDirection === 'en_vi') {
+                displayEl.innerHTML = `${q.questionText}<div class="rvt-word-sub">${q.wordData.pron || ''}</div>`;
+            } else {
+                displayEl.innerHTML = `"${q.questionText}"`;
+            }
+
+            // Hide explanation & disable next
+            document.getElementById("rvtExplanation").classList.add("is-hidden");
+            const nextBtn = document.getElementById("rvtBtnNext");
+            nextBtn.disabled = true;
+            nextBtn.innerText = rvtCurrentIndex === rvtQuestions.length - 1 ? "Xem kết quả 🏁" : "Tiếp theo ▶";
+
+            // Render options
+            const optGrid = document.getElementById("rvtOptions");
+            optGrid.innerHTML = "";
+            q.choices.forEach((choice, idx) => {
+                const btn = document.createElement("button");
+                btn.className = "rvt-opt-btn";
+                btn.innerHTML = `<span class="rvt-opt-letter">${String.fromCharCode(65 + idx)}</span><span>${choice}</span>`;
+                btn.onclick = () => rvtSelectOption(btn, choice);
+                optGrid.appendChild(btn);
+            });
+        }
+
+        function rvtSelectOption(selectedBtn, choiceText) {
+            const q = rvtQuestions[rvtCurrentIndex];
+            const allBtns = document.querySelectorAll(".rvt-opt-btn");
+
+            // Lock all buttons
+            allBtns.forEach(b => b.disabled = true);
+
+            const isCorrect = choiceText.toLowerCase().trim() === q.correctAnswer.toLowerCase().trim();
+
+            rvtAnswers.push({ question: q, selected: choiceText, isCorrect });
+
+            if (isCorrect) {
+                selectedBtn.classList.add("correct");
+                rvtScore++;
+                if (window.playSfx) window.playSfx('check');
+            } else {
+                selectedBtn.classList.add("incorrect");
+                if (window.playSfx) window.playSfx('uncheck');
+                // Highlight correct
+                allBtns.forEach(b => {
+                    const txt = b.querySelector("span:last-child");
+                    if (txt && txt.innerText.toLowerCase().trim() === q.correctAnswer.toLowerCase().trim()) {
+                        b.classList.add("correct");
+                    }
+                });
+            }
+
+            // Auto-pronounce English word
+            if (rvtDirection === 'vi_en' && 'speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance(q.wordData.word);
+                u.lang = 'en-US'; u.rate = 0.8;
+                window.speechSynthesis.speak(u);
+            }
+
+            // Show explanation
+            const expEl = document.getElementById("rvtExplanation");
+            expEl.innerHTML = `
+                <span class="rvt-exp-word">${q.wordData.word}</span>
+                <span class="rvt-exp-pos">(${q.wordData.pos || ''})</span>
+                <span class="rvt-exp-pron">${q.wordData.pron || ''}</span>
+                <div class="rvt-exp-mean">➜ ${q.wordData.mean}</div>
+                ${q.wordData.example ? `<div style="font-size:0.82rem;margin-top:0.3rem;font-style:italic;">&ldquo;${q.wordData.example}&rdquo;</div>` : ''}
+            `;
+            expEl.classList.remove("is-hidden");
+
+            document.getElementById("rvtBtnNext").disabled = false;
+        }
+
+        window.nextReviewQuestion = function() {
+            if (rvtCurrentIndex < rvtQuestions.length - 1) {
+                rvtCurrentIndex++;
+                if (window.playSfx) window.playSfx('click');
+                rvtRenderQuestion();
+            } else {
+                rvtShowResults();
+            }
+        };
+
+        function rvtShowResults() {
+            rvtStopTimer();
+            if (window.playSfx) window.playSfx('success');
+
+            document.getElementById("rvtSetupView").classList.add("is-hidden");
+            document.getElementById("rvtQuizView").classList.add("is-hidden");
+            document.getElementById("rvtResultView").classList.remove("is-hidden");
+
+            const pct = Math.round((rvtScore / rvtQuestions.length) * 100);
+            document.getElementById("rvtResultScore").innerText = `${rvtScore}/${rvtQuestions.length}`;
+            document.getElementById("rvtResultPct").innerText = `${pct}%`;
+
+            const circle = document.getElementById("rvtResultCircle");
+            const gradeEl = document.getElementById("rvtResultGrade");
+            circle.className = "rvt-result-circle";
+            if (pct >= 90) {
+                circle.classList.add("high");
+                gradeEl.innerText = "🏆 Xuất sắc! Mỹ Lệ thuộc hết rồi!";
+                if (typeof triggerConfetti === 'function') triggerConfetti();
+            } else if (pct >= 70) {
+                circle.classList.add("mid");
+                gradeEl.innerText = "🌟 Rất tốt! Còn vài từ cần ôn thêm!";
+            } else {
+                circle.classList.add("low");
+                gradeEl.innerText = "💪 Cố lên! Ôn lại các từ sai nhé!";
+            }
+
+            const m = Math.floor(rvtSeconds / 60);
+            const s = rvtSeconds % 60;
+            document.getElementById("rvtResultTime").innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+
+            // Render review list
+            const listEl = document.getElementById("rvtReviewList");
+            listEl.innerHTML = "";
+            rvtAnswers.forEach((ans, idx) => {
+                const item = document.createElement("div");
+                item.className = `rvt-review-item ${ans.isCorrect ? 'correct' : 'wrong'}`;
+                const badge = `<span class="rvt-review-badge ${ans.isCorrect ? 'ok' : 'fail'}">${ans.isCorrect ? '✓ Đúng' : '✕ Sai'}</span>`;
+                const qText = rvtDirection === 'en_vi'
+                    ? `${badge}<strong>${ans.question.wordData.word}</strong> <em style="color:var(--text-muted);font-size:0.8rem;">${ans.question.wordData.pron || ''}</em>`
+                    : `${badge}<strong>"${ans.question.questionText}"</strong>`;
+                const aText = ans.isCorrect
+                    ? `Đáp án: <span class="correct-ans">${ans.question.correctAnswer}</span>`
+                    : `Bạn chọn: <span class="wrong-ans">${ans.selected}</span> &nbsp;|&nbsp; Đúng: <span class="correct-ans">${ans.question.correctAnswer}</span>`;
+                item.innerHTML = `<div class="rvt-review-q">${qText}</div><div class="rvt-review-a">${aText}</div>`;
+                listEl.appendChild(item);
+            });
+        }
+
+        window.retryReviewTest = function() {
+            if (window.playSfx) window.playSfx('click');
+            window.startReviewTest();
+        };
+
+        window.backToReviewSetup = function() {
+            if (window.playSfx) window.playSfx('click');
+            rvtStopTimer();
+            initReviewTestSetup();
+        };
 
         // Switch Grammar card tabs: Formula, Usage, Examples
         window.switchGrammarTab = function(tabName) {

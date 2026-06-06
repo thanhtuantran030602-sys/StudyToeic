@@ -171,6 +171,7 @@
                         <div class="panel-tabs">
                             <button id="tabFlashcard" class="panel-tab active" onclick="switchVocabMode('flashcard')">Flashcard</button>
                             <button id="tabQuiz" class="panel-tab" onclick="switchVocabMode('quiz')">Luyện tập</button>
+                            <button id="tabReviewTest" class="panel-tab" onclick="switchVocabMode('review-test')">🎯 Kiểm tra</button>
                         </div>
                     </h3>
 
@@ -245,6 +246,86 @@
                             <!-- Populated dynamically by startQuiz() -->
                         </div>
                     </div>
+
+                    <!-- Review Test Mode View (Hidden by default) -->
+                    <div id="vocabReviewTestView" class="is-hidden">
+
+                        <!-- SETUP SCREEN -->
+                        <div id="rvtSetupView">
+                            <div class="rvt-setup-header">
+                                <span class="rvt-icon">🎯</span>
+                                <h4>Kiểm tra từ vựng hôm nay</h4>
+                                <p id="rvtSetupDesc">Kiểm tra nhanh các từ vựng trong bộ đang học</p>
+                            </div>
+                            <div class="rvt-setup-options">
+                                <label class="rvt-option-label">Chiều kiểm tra:</label>
+                                <div class="rvt-radio-group">
+                                    <label class="rvt-radio">
+                                        <input type="radio" name="rvtDir" value="en_vi" checked>
+                                        <span>Anh → Việt</span>
+                                    </label>
+                                    <label class="rvt-radio">
+                                        <input type="radio" name="rvtDir" value="vi_en">
+                                        <span>Việt → Anh</span>
+                                    </label>
+                                </div>
+                                <label class="rvt-option-label" style="margin-top:0.75rem;">Số câu hỏi:</label>
+                                <div class="rvt-radio-group">
+                                    <label class="rvt-radio">
+                                        <input type="radio" name="rvtCount" value="5" checked>
+                                        <span>5 câu</span>
+                                    </label>
+                                    <label class="rvt-radio">
+                                        <input type="radio" name="rvtCount" value="10">
+                                        <span>10 câu</span>
+                                    </label>
+                                    <label class="rvt-radio">
+                                        <input type="radio" name="rvtCount" value="all">
+                                        <span>Toàn bộ</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" style="width:100%;margin-top:0.5rem;" onclick="startReviewTest()">▶ Bắt đầu kiểm tra</button>
+                        </div>
+
+                        <!-- QUIZ SCREEN -->
+                        <div id="rvtQuizView" class="is-hidden">
+                            <div class="rvt-topbar">
+                                <span id="rvtCounter" class="rvt-counter-badge">Câu 1 / 10</span>
+                                <span class="rvt-timer-badge">⏱ <span id="rvtTimer">0:00</span></span>
+                            </div>
+                            <div class="rvt-progress-track">
+                                <div class="rvt-progress-fill" id="rvtProgress" style="width:0%"></div>
+                            </div>
+                            <div class="rvt-question-card">
+                                <p class="rvt-prompt" id="rvtPrompt">Chọn nghĩa đúng:</p>
+                                <div class="rvt-word-display" id="rvtWordDisplay"></div>
+                            </div>
+                            <div class="rvt-options-grid" id="rvtOptions"></div>
+                            <div id="rvtExplanation" class="rvt-explanation is-hidden"></div>
+                            <button id="rvtBtnNext" class="btn btn-primary" style="width:100%;margin-top:0.75rem;" onclick="nextReviewQuestion()" disabled>Tiếp theo ▶</button>
+                        </div>
+
+                        <!-- RESULT SCREEN -->
+                        <div id="rvtResultView" class="is-hidden">
+                            <div class="rvt-result-card">
+                                <div class="rvt-result-circle" id="rvtResultCircle">
+                                    <span id="rvtResultScore">0/0</span>
+                                    <span id="rvtResultPct">0%</span>
+                                </div>
+                                <div id="rvtResultGrade" class="rvt-result-grade">🏆 Xuất sắc!</div>
+                                <div class="rvt-result-time">⏱ Thời gian: <strong id="rvtResultTime">0:00</strong></div>
+                                <div class="rvt-result-actions">
+                                    <button class="btn btn-primary" onclick="retryReviewTest()">🔄 Làm lại</button>
+                                    <button class="btn" onclick="backToReviewSetup()">⚙ Cài đặt lại</button>
+                                </div>
+                            </div>
+                            <div class="rvt-review-list" id="rvtReviewList"></div>
+                        </div>
+
+                    </div>
+                    <!-- END Review Test Mode View -->
+
                 </div>
 
                 <!-- Grammar Card Panel -->
